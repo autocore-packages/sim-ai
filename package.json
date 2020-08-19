@@ -1,0 +1,10 @@
+{
+    "name": "com.autocore.sim-ai",
+    "displayName": "sim-ai",
+    "description": "AI of Simulator",
+    "version": "1.0.0",
+    "license": "MIT",
+    "dependencies": {
+        "com.autocore.sim-ui": "https://github.com/autocore-packages/sim-ui.git#1.0.12"
+    }
+}

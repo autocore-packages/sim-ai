@@ -1,3 +1,15 @@
-﻿{
-	"name": "unity.sim-ai"
+{
+    "name": "unity.sim-ai",
+    "references": [
+        "unity.sim-ui"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

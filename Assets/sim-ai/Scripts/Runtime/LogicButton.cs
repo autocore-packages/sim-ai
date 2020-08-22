@@ -18,7 +18,7 @@ namespace Assets.Scripts.Element
         }
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (obj != null && ElementsManager.Instance.editMode == ElementsManager.EditMode.Null && eventData.button == PointerEventData.InputButton.Left)
+            if (obj != null && !ElementsManager.Instance.IsInEdit  && eventData.button == PointerEventData.InputButton.Left)
             {
                 ElementsManager.Instance.SelectedElement = obj;
             }
@@ -26,14 +26,14 @@ namespace Assets.Scripts.Element
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (obj != null && ElementsManager.Instance.editMode == ElementsManager.EditMode.Null && eventData.button == PointerEventData.InputButton.Left)
+            if (obj != null && !ElementsManager.Instance.IsInEdit && eventData.button == PointerEventData.InputButton.Left)
             {
                 obj.StartDrag();
             }
         }
         public void OnDrag(PointerEventData eventData)
         {
-            if (obj != null && ElementsManager.Instance.editMode == ElementsManager.EditMode.Null && eventData.button == PointerEventData.InputButton.Left)
+            if (obj != null && !ElementsManager.Instance.IsInEdit && eventData.button == PointerEventData.InputButton.Left)
             {
                 obj.ObjDrag();
             }

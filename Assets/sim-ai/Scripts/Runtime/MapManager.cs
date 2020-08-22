@@ -17,93 +17,105 @@
 #endregion
 
 
-using Assets.Scripts.Edit;
-using Assets.Scripts.Element;
 using Assets.Scripts.SimuUI;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Element
 {
-    public class MapManager : SingletonWithMono<MapManager>
+    public class MapManager:MonoBehaviour
     {
-        public MapData mapData;
-        private Roads roads;
-        public List<Lane> Lanes;
-        public bool isRepeat = false;
-        protected override void Awake()
+        private static MapManager _instance;
+        public static MapManager Instance
         {
-            base.Awake();
-            LoadRoadData();
+            get
+            {
+                if (_instance == null)
+                    Debug.LogError("No MapManager");
+                return _instance;
+            }
+        }
+        public SimuTestMode testMode;
+        private MapData mapData;
+        public MapData MapData
+        {
+            get
+            {
+                if (mapData == null) Debug.LogError("No mapData");
+                return mapData;
+            }
+            set
+            {
+                mapData = value;
+            }
+        }
+        public bool isRepeat = false;
+        void Awake()
+        {
+            _instance = this; 
         }
         void Start()
         {
             Mapinit();
-            TestDataManager.Instance.TDMInit();
         }
         public void Mapinit()
         {
-            ElementsManager.Instance.SwitchCheckPoint();
-            roads = GetComponentInChildren<Roads>();
-            Lanes = roads.list_Lane;
             ElementsManager.Instance.RemoveAllElements();
             SetMapElements();
         }
         public void SetMapElements()
         {
-            if (TestConfig.TestMode.TestCarStart != null) EgoVehicle.Instance.ResetCar();
-            isRepeat = TestConfig.TestMode.isRepeat;
-            if (TestConfig.TestMode.CheckPointSettings != null && TestConfig.TestMode.CheckPointSettings.Count > 0)
+            if (testMode.TestCarStart != null) ElementsManager.Instance.testCar.ElementReset();
+            isRepeat = testMode.isRepeat;
+            if (testMode.CheckPointAtts != null && testMode.CheckPointAtts.Count > 0)
             {
-                foreach (CheckPointSetting setting in TestConfig.TestMode.CheckPointSettings)
+                foreach (ElementAttbutes attrubute in testMode.CheckPointAtts)
                 {
-                    ElementsManager.Instance.AddCheckPoint(TestConfig.ParseV3(setting.transformData.V3Pos), TestConfig.ParseV3(setting.transformData.V3Rot), TestConfig.ParseV3(setting.transformData.V3Sca), setting.Name).chechPointSetting = setting;
+                    ElementsManager.Instance.AddCheckPoint(attrubute.TransformData.V3Pos,attrubute.TransformData.V3Rot,attrubute.TransformData.V3Sca, attrubute.Name);
 
                 }
             }
-            if (TestConfig.TestMode.ObstacleSettings != null)
+            if (testMode.ObstacleAtts != null)
             {
-                foreach (ObstacleSetting setting in TestConfig.TestMode.ObstacleSettings)
+                foreach (ElementAttbutes attrubute in testMode.ObstacleAtts)
                 {
-                    ElementsManager.Instance.AddObstacle(TestDataManager.ParseV3(setting.Pos), TestDataManager.ParseV3(setting.Rot), TestDataManager.ParseV3(setting.Scale), setting.Name);
+                    ElementsManager.Instance.AddObstacle(attrubute.TransformData.V3Pos, attrubute.TransformData.V3Rot, attrubute.TransformData.V3Sca, attrubute.Name);
                 }
             }
-            if (TestConfig.TestMode.CarAISettings != null)
+            if (testMode.CarAIAtts != null)
             {
-                foreach (CarAISetting setting in TestConfig.TestMode.CarAISettings)
+                foreach (ElementAttbutes attrubute in testMode.CarAIAtts)
                 {
-                    ElementsManager.Instance.AddCarAI(TestDataManager.ParseV3(setting.PosInit), setting.Name).SetCarAISetting(setting);
+                    ElementsManager.Instance.AddCarAI(attrubute.PosInit.GetVector3(), attrubute.Name).CarInit();
                 }
             }
-            if (TestConfig.TestMode.HumanSettings != null)
+            if (testMode.HumanAtts != null)
             {
-                foreach (HumanSetting setting in TestConfig.TestMode.HumanSettings)
+                foreach (ElementAttbutes attrubute in testMode.HumanAtts)
                 {
-                    ElementsManager.Instance.AddHuman(TestDataManager.ParseV3(setting.PosArray[0]), setting.Name).SetHumansetting(setting);
+                    ElementsManager.Instance.AddHuman(attrubute.PosArray[0],attrubute.Name).SetObjAttbutes(attrubute);
                 }
             }
-            if (TestConfig.TestMode.TrafficLightSettings != null)
+            if (testMode.TrafficLightAtts != null)
             {
-                //foreach (TrafficLightSetting setting in TestConfig.TestMode.TrafficLightSettings)
-                //{
-                //    foreach (ObjTrafficLight item in ElementsManager.Instance.TrafficLightList)
-                //    {
-                //        if (item.name == setting.Name)
-                //        {
-                //            item.TrafficLightSetting= setting;
-                //        }
-                //    }
-                //}
+                foreach (ElementAttbutes attrubute in testMode.TrafficLightAtts)
+                {
+                    foreach (ObjTrafficLight item in ElementsManager.Instance.TrafficLightList)
+                    {
+                        if (item.name == attrubute.Name)
+                        {
+                            item.SetObjAttbutes(attrubute);
+                        }
+                    }
+                }
             }
-            if (TestConfig.TestMode.VoyageTestConfig != null)
-            {
-                VoyageTestManager.Instance.SetVoyageTestConfig(TestConfig.TestMode.VoyageTestConfig);
-            }
+            //if (TestConfig.TestMode.VoyageTestConfig != null)
+            //{
+            //    VoyageTestManager.Instance.SetVoyageTestConfig(TestConfig.TestMode.VoyageTestConfig);
+            //}
         }
         public void ResetMapElements()
         {
-            if (TestConfig.TestMode.TestCarStart != null) EgoVehicle.Instance.ResetCar();
+            if (testMode.TestCarStart != null) ElementsManager.Instance.testCar.ElementReset();
             foreach (ElementObject obj in ElementsManager.Instance.CarList)
             {
                 var objCarAI = obj.GetComponent<ObjAICar>();
@@ -128,11 +140,11 @@ namespace Assets.Scripts
 
         public LaneData SearchNearestPos2Lane(out int index, Vector3 positon)
         {
-            if (mapData == null) Debug.LogError("MapData Load fialed");
+            if (MapData == null) Debug.LogError("MapData Load fialed");
             float disMin = Mathf.Infinity;
-            LaneData laneDataTemp = mapData.LanesData[0];
+            LaneData laneDataTemp = MapData.LanesData[0];
             int indexTemp = 0;
-            foreach (LaneData lane in mapData.LanesData)
+            foreach (LaneData lane in MapData.LanesData)
             {
                 foreach (Vec3 pos in lane.List_pos)
                 {
@@ -148,20 +160,6 @@ namespace Assets.Scripts
             }
             index = indexTemp + 1;
             return laneDataTemp;
-        }
-
-
-        public void LoadRoadData()
-        {
-            TextAsset textAsset = Resources.Load("RoadData/" + TestConfig.testMap.ToString()) as TextAsset;
-            if (textAsset == null)
-            {
-                Debug.Log("file failed");
-            }
-            else
-            {
-                mapData = JsonConvert.DeserializeObject<MapData>(textAsset.text);
-            }
         }
     }
 }

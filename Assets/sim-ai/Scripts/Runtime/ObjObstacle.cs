@@ -24,54 +24,29 @@ using UnityEngine;
 
 namespace Assets.Scripts.Element
 {
-    public class ObstacleSetting
-    {
-        public string Name { get; set; }
-        public string Pos { get; set; }
-        public string Scale { get; set; }
-        public string Rot { get; set; } 
-    }
     public class ObjObstacle : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, true, true, true, false, false, false, true },
-                name = transform.name,
-                pos = transform.position,
-                rot = transform.rotation.eulerAngles.y,
-                sca = transform.localScale.y,
-                canDelete = CanDelete
-            };
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = false;
+            ea.isShowName = true;
+            ea.isShowHuman = false;
+            ea.isShowPos = true;
+            ea.isShowRot = true;
+            ea.isShowSca = true;
+            ea.isShowDelete = CanDelete;
+            ea.Name = transform.name;
+            ea.TransformData = new TransformData(transform);
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            transform.position = attbutes.pos;
-            transform.rotation = Quaternion.Euler(new Vector3(0, attbutes.rot, 0));
-            transform.localScale = attbutes.sca * new Vector3(1, 1, 1);
-        }
-        private ObstacleSetting obstacleSetting;
-        public ObstacleSetting ObstacleSetting
-        {
-            get
-            {
-                if (obstacleSetting == null)
-                    obstacleSetting = new ObstacleSetting
-                    {
-                        Name = name,
-                        Pos = transform.position.ToString(),
-                        Scale = transform.localScale.ToString(),
-                        Rot = transform.rotation.eulerAngles.ToString()
-                    };
-                return obstacleSetting;
-            }
-            set
-            {
-                obstacleSetting = value;
-            }
+            transform.position = attbutes.TransformData.V3Pos.GetVector3();
+            transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
+            transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
         }
         protected override void Start()
         {
@@ -90,10 +65,6 @@ namespace Assets.Scripts.Element
         public override void ElementReset()
         {
             base.ElementReset();
-            name = ObstacleSetting.Name;
-            transform.position = TestDataManager.ParseV3(ObstacleSetting.Pos);
-            transform.rotation = Quaternion.Euler( TestDataManager.ParseV3(ObstacleSetting.Rot));
-            transform.localScale = TestDataManager.ParseV3(ObstacleSetting.Scale);
         }
     }
 }

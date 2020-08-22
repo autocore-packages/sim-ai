@@ -16,7 +16,7 @@ namespace Assets.Scripts.Element
         {
             GetComponent<Button>()?.onClick.AddListener(delegate ()
             {
-                if (ElementsManager.Instance.editMode == ElementsManager.EditMode.Null) ElementsManager.Instance.SelectedElement = elementObj.GetComponent<ElementObject>();
+                if (!ElementsManager.Instance.IsInEdit) ElementsManager.Instance.SelectedElement = elementObj.GetComponent<ElementObject>();
             });
         }
         protected override void OnDestroy()

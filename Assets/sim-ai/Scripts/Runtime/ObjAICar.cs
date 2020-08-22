@@ -24,38 +24,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.Element
 {
-
-    public class CarAISetting
-    {
-        public string Name { get; set; }
-        public string PosStart { get; set; }
-        public string PosEnd { get; set; }
-        public string PosInit { get; set; }
-        public float Speed1 { get; set; }
-        public float Speed2 { get; set; }
-        public float TimeEvent { get; set; }
-        public float DisEvent { get; set; }
-        public int ModeEvent { get; set; }
-    }
     public class ObjAICar : ElementObject
     {
         protected override void Start()
         {
             nameLogic = "GreenCarLogic";
             base.Start();
-            carAISetting = new CarAISetting
-            {
-                Name = transform.name,
-                PosInit = posInit.ToString(),
-                PosStart = posStart.ToString(),
-                PosEnd = posAim.ToString(),
-                Speed1 = speed1,
-                Speed2 = speed2,
-                TimeEvent = timeEvent,
-                DisEvent = disEvent
-            };
         }
-        private CarAISetting carAISetting;
         public Vector3 posInit;
         public Vector3 posStart;
         public Vector3 posAim;
@@ -66,50 +41,26 @@ namespace Assets.Scripts.Element
         public float disEvent = 0;
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, false, false, false, false, false, true, true },
-                name = transform.name,
-                carAIAtt = new CarAIAtt
-                {
-                    spdCarAI = speedObjTarget
-                },
-                canDelete = CanDelete
-            };
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = true;
+            ea.isShowDelete = CanDelete;
+            ea.isShowName = true;
+            ea.isShowHuman = false;
+            ea.isShowPos = false;
+            ea.isShowRot = false;
+            ea.isShowSca = false;
+            ea.Name = transform.name;
+            ea.Speed = speedObjTarget;
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            speedObjTarget = attbutes.carAIAtt.spdCarAI;
-        }
-        public void SetCarAISetting(CarAISetting setting)
-        {
-            carAISetting = setting;
-            transform.name = carAISetting.Name;
-            posInit = TestConfig.ParseV3(carAISetting.PosInit);
-            posStart = TestConfig.ParseV3(carAISetting.PosStart);
-            posAim = TestConfig.ParseV3(carAISetting.PosEnd);
-            speed1 = carAISetting.Speed1;
-            speed2 = carAISetting.Speed2;
-            timeEvent = carAISetting.TimeEvent;
-            disEvent = carAISetting.DisEvent;
-            CarInit();
-        }
-        public CarAISetting GetCarAISetting()
-        {
-            carAISetting = new CarAISetting
-            {
-                Name = transform.name,
-                PosInit = posInit.ToString(),
-                PosStart = posStart.ToString(),
-                PosEnd = posAim.ToString(),
-                Speed1 = speed1,
-                Speed2 = speed2,
-                TimeEvent = timeEvent,
-                DisEvent = disEvent
-            };
-            return carAISetting;
+            speedObjTarget = attbutes.Speed;
+            if (attbutes.PosInit != null) posInit = attbutes.PosInit.GetVector3();
+            if (attbutes.PosStart != null) posStart = attbutes.PosStart.GetVector3();
+            if (attbutes.PosEnd != null) posAim = attbutes.PosEnd.GetVector3();
         }
         //车辆是否行驶
         public bool isCarDrive = false;
@@ -131,7 +82,7 @@ namespace Assets.Scripts.Element
         private int indexLane;
         //当前目标坐标
         private Vector2 currentAimPos;
-        private readonly float maxSpeed=40;//最大速度
+        private readonly float maxSpeed = 40;//最大速度
         public float speedCurrent;//车辆实际速度
         private float acceleration_Drive = 3;
         private float acceleration_Break = 5;
@@ -140,8 +91,6 @@ namespace Assets.Scripts.Element
         public void CarInit()
         {
             speedCurrent = 0;
-            speedObjTarget = carAISetting.Speed1;
-            transform.name = carAISetting.Name;
             if (laneFirst == null) laneFirst = MapManager.Instance.SearchNearestPos2Lane(out indexLaneFiset, posStart);
             laneCurrent = laneFirst;
             posAim = laneCurrent.List_pos[indexLaneFiset + 1].GetVector3();
@@ -170,7 +119,6 @@ namespace Assets.Scripts.Element
         void ObstacleCheck()
         {
             isObstacleFront = false;
-            if (VoyageTestManager.Instance.target == transform) return;
             Vector3 DirCarGo = indexLane - 1 > 0 ? posAimTemp - laneCurrent.List_pos[indexLane - 1].GetVector3() : transform.forward;
             Vector3 PosCarOrigin = posAimTemp + new Vector3(0, 0.5f, 0) - (car_extent * DirCarGo.normalized);
 
@@ -243,8 +191,7 @@ namespace Assets.Scripts.Element
         void DistanceCheck()
         {
             distanceBrake = speedCurrent * (speedCurrent / acceleration_Break) / 2;
-            if (distanceBrake < 1f) distanceBrake = 1f;
-            distanceBrake += car_extent;
+            if (distanceBrake < car_extent + 1) distanceBrake = car_extent + 1;
             distance2Target = offset_V3.magnitude;
             if (distance2Target > checkDistance && angle_Front2Aim > 150)
             {
@@ -313,14 +260,14 @@ namespace Assets.Scripts.Element
             return false;
         }
 
-        public TrafficLight currentTL;//当前目标交通灯
+        public ITrafficLight currentTL;//当前目标交通灯
         private float disRemain;//距离停止线的距离
         int currentPath2T;//0是有问题，1是APass，2是Bpath
         private float angle2TL;
         void TrafficLightCheck()
         {
             //当前路段没有红绿灯
-            if (currentTL == null || currentTL.lightMode == TrafficLight.LightMode.Green)
+            if (currentTL == null || currentTL.CanPass)
             {
                 isWaitTLStop = false;
                 return;
@@ -343,7 +290,7 @@ namespace Assets.Scripts.Element
             int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) - 1;
             if (index >= 0)
             {
-                laneChangeTarget = MapManager.Instance.mapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
                 return true;
             }
             else return false;
@@ -353,7 +300,7 @@ namespace Assets.Scripts.Element
             int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) + 1;
             if (index < laneCurrent.List_sameLanesID.Count)
             {
-                laneChangeTarget = MapManager.Instance.mapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
                 return true;
             }
             else return false;
@@ -382,7 +329,7 @@ namespace Assets.Scripts.Element
             int lenth = (int)(distanceBrake - car_extent);
             if (lenth < 3) lenth = 3;
             index += lenth;
-            if (index >= countLane) index = countLane - 1; 
+            if (index >= countLane) index = countLane - 1;
             Vector3 direction = laneChangeTarget.List_pos[index].GetVector3() - transform.position;
             if (!ObstacleCheck(direction))
             {
@@ -399,7 +346,7 @@ namespace Assets.Scripts.Element
         /// <returns></returns>
         private LaneData SearchNextLane()
         {
-            if (MapManager.Instance.mapData == null) Debug.Log("lanes is null");
+            if (MapManager.Instance.MapData == null) Debug.Log("lanes is null");
             if (isHaveTarget)
             {
                 int index = ListLane2Target.Count - 1;
@@ -409,7 +356,7 @@ namespace Assets.Scripts.Element
             else
             {
                 listNextLanes = new List<LaneData>();
-                foreach (LaneData lane in MapManager.Instance.mapData.LanesData)
+                foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
                 {
                     float dis = Vector3.Distance(lane.PosStart.GetVector3(), laneCurrent.PosEnd.GetVector3());
                     if (dis == 0) listNextLanes.Add(lane);
@@ -469,7 +416,7 @@ namespace Assets.Scripts.Element
         {
             if (ListLanes.Count >= 30 || lenth > 10000) return;
             LaneData laneLast = ListLanes[ListLanes.Count - 1];
-            foreach (LaneData lane in MapManager.Instance.mapData.LanesData)
+            foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
                 if (ListLanes.Contains(lane)) continue; //剔除掉重复的
@@ -499,7 +446,7 @@ namespace Assets.Scripts.Element
         {
             if (ListLanes.Count >= 30 || lenth > 5000) return;
             LaneData laneLast = ListLanes[ListLanes.Count - 1];
-            foreach (LaneData lane in MapManager.Instance.mapData.LanesData)
+            foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
                 if (ListLanes.Contains(lane) && lane != ListLanes[0]) continue; //剔除掉重复的
@@ -524,7 +471,7 @@ namespace Assets.Scripts.Element
         public override void ElementReset()
         {
             base.ElementReset();
-            CarInit();
+            SetObjAttbutes(objAttbutes);
         }
     }
 

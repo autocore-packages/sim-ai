@@ -53,7 +53,7 @@ namespace Assets.Scripts.Element
         {
             if (CanDrag)
             {
-                MousePosDragStart = OverLookCamera.Instance.MouseWorldPos;
+                MousePosDragStart = ElementsManager.Instance.MouseWorldPos;
                 PosDragStart = transform.position;
             }
         }
@@ -63,7 +63,6 @@ namespace Assets.Scripts.Element
         }
         public virtual void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            name = attbutes.name;
         }
         private void OnDestroy()
         {
@@ -77,6 +76,7 @@ namespace Assets.Scripts.Element
         protected virtual void Start()
         {
             PanelInspector.Instance.ElementUpdate += SetObjAttbutes;
+            objAttbutes = GetObjAttbutes();
             InitElement();
         }
         private void InitElement()
@@ -149,12 +149,12 @@ namespace Assets.Scripts.Element
         {
             if (CanDrag)
             {
-                transform.position = PosDragStart + OverLookCamera.Instance.MouseWorldPos - MousePosDragStart;
+                transform.position = PosDragStart + ElementsManager.Instance.MouseWorldPos - MousePosDragStart;
             }
         }
         public void FollowMouse()
         {
-            transform.position = OverLookCamera.Instance.MouseWorldPos + offsetPos;
+            transform.position = ElementsManager.Instance.MouseWorldPos + offsetPos;
         }
         public void SetObjScale(float value)
         {
@@ -164,7 +164,8 @@ namespace Assets.Scripts.Element
         }
         public virtual void ElementReset()
         {
-
+            if (objAttbutes != null) SetObjAttbutes(objAttbutes);
+            else Debug.Log("No att");
         }
     }
 }

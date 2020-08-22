@@ -19,30 +19,35 @@
 
 
 using Assets.Scripts.SimuUI;
+using UnityEngine;
 
 namespace Assets.Scripts.Element
 {
 
     public class ObjTestCar : ElementObject
     {
-        public TrafficLight CurrentTL { get; set; }
+        public ITrafficLight CurrentTL { get; set; }
 
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, true ,false, false, false, false, false, false },
-                name = transform.name,
-                pos = transform.position,
-                rot = transform.rotation.eulerAngles.y,
-                canDelete = CanDelete
-            };
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = false;
+            ea.isShowName = true;
+            ea.isShowHuman = false;
+            ea.isShowPos = true;
+            ea.isShowRot = true;
+            ea.isShowSca = false;
+            ea.isShowDelete = CanDelete;
+            ea.Name = transform.name;
+            ea.TransformData = new TransformData(transform);
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            transform.position = attbutes.pos;
+            transform.position = attbutes.TransformData.V3Pos.GetVector3();
+            transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
         }
         protected override void Start()
         {

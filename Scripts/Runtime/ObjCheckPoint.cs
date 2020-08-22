@@ -17,58 +17,34 @@
 #endregion
 
 using Assets.Scripts.SimuUI;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Element
 {
-    public class CheckPointSetting
-    {
-        public string Name { get; set; }
-
-        public TransformData transformData { get; set; }
-    }
     public class ObjCheckPoint : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, true, true, false, false, false,false, true },
-                name = transform.name,
-                pos = transform.position,
-                rot=transform.rotation.eulerAngles.y,
-                sca = transform.localScale.y,
-                canDelete = CanDelete
-            };
-        }
-        public CheckPointSetting chechPointSetting;
-        public CheckPointSetting GetCheckPointSetting()
-        {
-            TransformData data = new TransformData(new Vec3(transform.position), new Vec3(transform.rotation.eulerAngles), new Vec3(transform.localScale));
-            chechPointSetting = new CheckPointSetting
-            {
-                Name = gameObject.name,
-                transformData = data
-            };
-            return chechPointSetting;
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = false;
+            ea.isShowName = true;
+            ea.isShowHuman = false;
+            ea.isShowPos = true;
+            ea.isShowRot = true;
+            ea.isShowSca = true;
+            ea.isShowDelete = CanDelete;
+            ea.Name = transform.name;
+            ea.TransformData = new TransformData(transform);
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            transform.position = attbutes.pos;
-            transform.rotation = Quaternion.Euler(new Vector3(0, attbutes.rot, 0));
-            transform.localScale = attbutes.sca * new Vector3(1, 1, 1);
-        }
-        public void SetObstacleSetting()
-        {
-            if (chechPointSetting != null)
-            {
-                transform.name = chechPointSetting.Name;
-                transform.position = TestConfig.ParseV3(chechPointSetting.transformData.V3Pos);
-                transform.rotation = Quaternion.Euler(TestConfig.ParseV3(chechPointSetting.transformData.V3Rot));
-                transform.localScale = TestConfig.ParseV3(chechPointSetting.transformData.V3Sca);
-            }
+            transform.position = attbutes.TransformData.V3Pos.GetVector3();
+            transform.rotation = Quaternion.Euler( attbutes.TransformData.V3Pos.GetVector3());
+            transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
         }
         protected override void Start()
         {
@@ -87,7 +63,6 @@ namespace Assets.Scripts.Element
         public override void ElementReset()
         {
             base.ElementReset(); 
-            SetObstacleSetting();
         }
     }
 }

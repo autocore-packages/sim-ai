@@ -5,57 +5,29 @@ using UnityEditor;
 
 namespace Assets.Scripts.Element
 {
-    public class TrafficLightSetting
-    {
-        public string Name { get; set; }
-        public float SwitchTime { get; set; }
-        public float WaitTime { get; set; }
-        public bool IsAuto { get; set; }
-        public ObjTrafficLight.TrafficMode lightMode { get; set; }
-    }
     public class ObjTrafficLight : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, false, false, false, false, true, false, false },
-                name = transform.name,
-                trafficLigghtAtt = new TrafficLigghtAtt
-                {
-                    timeSwitch = switchTime,
-                    timeWait = waitTime,
-                    mode = (int)trafficMode
-                },
-                canDelete = CanDelete
-            };
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = false;
+            ea.isShowName = true;
+            ea.isShowHuman = false;
+            ea.isShowPos = false;
+            ea.isShowRot = false;
+            ea.isShowSca = false;
+            ea.isShowTraffic = true;
+            ea.isShowDelete = CanDelete;
+            ea.Name = transform.name;
+            ea.WaitTime = waitTime;
+            ea.SwitchTime = switchTime;
+            ea.lightMode = (int)trafficMode;
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            switchTime = attbutes.trafficLigghtAtt.timeSwitch;
-            waitTime = attbutes.trafficLigghtAtt.timeWait;
-        }
-        public TrafficLightSetting TrafficLightSetting
-        {
-            get
-            {
-                return new TrafficLightSetting
-                {
-                    Name = name,
-                    SwitchTime = switchTime,
-                    WaitTime = waitTime,
-                    lightMode = trafficMode
-                };
-            }
-            set
-            {
-                switchTime = value.SwitchTime;
-                waitTime = value.WaitTime;
-                trafficMode = value.lightMode;
-                SetLights();
-            }
         }
         public enum TrafficMode
         {
@@ -64,8 +36,8 @@ namespace Assets.Scripts.Element
             Bpass = 2
         }
         public TrafficMode trafficMode = TrafficMode.Apass;
-        public TrafficLight[] trafficLightGroupA;
-        public TrafficLight[] trafficLightGroupB;
+        public ITrafficLight[] trafficLightGroupA;
+        public ITrafficLight[] trafficLightGroupB;
         public float switchTime = 10;
         public float waitTime = 3;//黄灯时间
         private float tempSwtichTime=0;
@@ -82,8 +54,8 @@ namespace Assets.Scripts.Element
             CanDrag = false;
             CanDelete = false;
             ltl = logicObject.GetComponent<LogicTrafficLight>();
-            trafficLightGroupA = transform.GetChild(0).GetComponentsInChildren<TrafficLight>();
-            trafficLightGroupB = transform.GetChild(1).GetComponentsInChildren<TrafficLight>();
+            trafficLightGroupA = transform.GetChild(0).GetComponentsInChildren<ITrafficLight>();
+            trafficLightGroupB = transform.GetChild(1).GetComponentsInChildren<ITrafficLight>();
             SetLights();
         }
 
@@ -122,38 +94,38 @@ namespace Assets.Scripts.Element
             SetLights();
             tempTime = 0;
         }
-        public void SetLights()
+        private void SetLights()
         {
             switch (trafficMode)
             {
                 case TrafficMode.Wait:
-                    foreach (TrafficLight light in trafficLightGroupA)
-                    {
-                        light.SetLight(TrafficLight.LightMode.Yellow);
+                    foreach (ITrafficLight light in trafficLightGroupA)
+                    { 
+                        light.SetLight(2);
                     }
-                    foreach (TrafficLight light in trafficLightGroupB)
+                    foreach (ITrafficLight light in trafficLightGroupB)
                     {
-                        light.SetLight(TrafficLight.LightMode.Yellow);
+                        light.SetLight(2);
                     }
                     break;
                 case TrafficMode.Apass:
-                    foreach (TrafficLight light in trafficLightGroupA)
+                    foreach (ITrafficLight light in trafficLightGroupA)
                     {
-                        light.SetLight(TrafficLight.LightMode.Green);
+                        light.SetLight(1);
                     }
-                    foreach (TrafficLight light in trafficLightGroupB)
+                    foreach (ITrafficLight light in trafficLightGroupB)
                     {
-                        light.SetLight(TrafficLight.LightMode.Red);
+                        light.SetLight(3);
                     }
                     break;
                 case TrafficMode.Bpass:
-                    foreach (TrafficLight light in trafficLightGroupA)
+                    foreach (ITrafficLight light in trafficLightGroupA)
                     {
-                        light.SetLight(TrafficLight.LightMode.Red);
+                        light.SetLight(3);
                     }
-                    foreach (TrafficLight light in trafficLightGroupB)
+                    foreach (ITrafficLight light in trafficLightGroupB)
                     {
-                        light.SetLight(TrafficLight.LightMode.Green);
+                        light.SetLight(1);
                     }
                     break;
                 default:

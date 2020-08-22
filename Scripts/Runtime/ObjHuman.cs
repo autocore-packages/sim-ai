@@ -25,75 +25,33 @@ using UnityEngine;
 
 namespace Assets.Scripts.Element
 {
-
-    public class HumanSetting
-    {
-        public string Name { get; set; }
-        public float Speed { get; set; }
-        public float StopTime { get; set; }
-        public string[] PosArray { get; set; }
-        public bool IsRepeat { get; set; }
-    }
     public class ObjHuman : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            return new ElementAttbutes
-            {
-                attributes = new bool[8] { true, true, false, false, true, false, false, true },
-                name = transform.name,
-                pos = transform.position,
-                humanAtt = new HumanAtt
-                {
-                    speed = speedObjTarget,
-                    isRepeat = isHumanRepeat,
-                    isWait = stopTime != 0.1f,
-                    aimList = PosList
-                },
-                canDelete = CanDelete
-            };
+            ElementAttbutes ea = new ElementAttbutes();
+            ea.isShowCarAI = false;
+            ea.isShowDelete = CanDelete;
+            ea.isShowName = true;
+            ea.isShowHuman = true;
+            ea.isShowPos = false;
+            ea.isShowRot = false;
+            ea.isShowSca = false;
+            ea.IsRepeat = isHumanRepeat;
+            ea.Name = transform.name;
+            ea.Speed = speedObjTarget;
+            ea.IsWait = stopTime != 0.1f;
+            ea.PosArray = PosList;
+            return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
-            transform.position = attbutes.pos;
-            speedObjTarget = attbutes.humanAtt.speed;
-            isHumanRepeat = attbutes.humanAtt.isRepeat;
-            PosList = attbutes.humanAtt.aimList;
-            stopTime=attbutes.humanAtt.isWait?1:0.1f;
-        }
-        private HumanSetting humanSetting;
-        public HumanSetting GetHumansetting()
-        {
-            string[] posStrArray = new string[PosList.Count];
-            for (int i = 0; i < PosList.Count; i++)
-            {
-                posStrArray[i] = PosList[i].ToString();
-            }
-            humanSetting = new HumanSetting
-            {
-                Name = transform.name,
-                Speed = speedObjTarget,
-                StopTime = stopTime,
-                PosArray = posStrArray,
-                IsRepeat = isHumanRepeat
-            };
-            return humanSetting;
-        }
-        public void SetHumansetting(HumanSetting setting)
-        {
-            humanSetting = setting;
-            List<Vector3> vector3s = new List<Vector3> { };
-            for (int i = 0; i < setting.PosArray.Length; i++)
-            {
-                vector3s.Add(TestConfig.ParseV3(setting.PosArray[i]));
-            }
-            transform.name = setting.Name;
-            speedObjTarget = setting.Speed;
-            stopTime = setting.StopTime;
-            PosList = vector3s;
-            isHumanRepeat = setting.IsRepeat;
+            speedObjTarget = attbutes.Speed;
+            isHumanRepeat = attbutes.IsRepeat;
+            PosList = attbutes.PosArray;
+            stopTime=attbutes.IsWait?1:0.1f;
         }
         private enum HumanMode
         {
@@ -102,7 +60,20 @@ namespace Assets.Scripts.Element
             stop = 2
         }
         private HumanMode humanCurrentMode;
-        public List<Vector3> PosList=new List<Vector3>();
+        public List<Vec3> PosList=new List<Vec3>();
+        public List<Vector3> Aims
+        {
+            get
+            {
+                List<Vector3> list = new List<Vector3>();
+                foreach (var item in PosList)
+                {
+                    list.Add(item.GetVector3());
+                }
+                return list;
+
+            }
+        }
         public float stopTime = 2;//人物停顿时间
         public bool isHumanRepeat = true;
         private bool isMove = false;
@@ -116,7 +87,7 @@ namespace Assets.Scripts.Element
         public bool isWaitTL;
         public int pass;//0是没过，1是过A，2是过B
         private int path;//1是A，2是B
-        private Traffic_Light TC;
+        //private Traffic_Light TC;
         protected override void Start()
         {
             nameLogic = "HumanLogic";
@@ -137,17 +108,17 @@ namespace Assets.Scripts.Element
             base.Update();
             if (PosList.Count < 1) return;
             ray = new Ray(transform.position + Vector3.up, transform.forward);
-            distance_Target = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(PosList[currentIndex].x, PosList[currentIndex].z));
+            distance_Target = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(PosList[currentIndex].X, PosList[currentIndex].Z));
 
             if (distance_Target > 0.1f)
             {
-                transform.LookAt(PosList[currentIndex]);
+                transform.LookAt(PosList[currentIndex].GetVector3());
             }
             else if (!isReachTarget)
             {
                 isReachTarget = true;
                 pass = 0;
-                currentCollider = null;
+                //currentCollider = null;
                 StartCoroutine(SetNextTarget());
             }
             ////正在等待红绿灯并且当前红绿灯可以通过
@@ -260,11 +231,11 @@ namespace Assets.Scripts.Element
         private int GetNearlyPoint()
         {
             Vector3 temPos = transform.position;
-            float minDis = Vector3.Distance(temPos, PosList[0]);
+            float minDis = Vector3.Distance(temPos, PosList[0].GetVector3());
             int nearlyIndex = 0;
             for (int i = 1; i < PosList.Count; i++)
             {
-                float tempDis = Vector3.Distance(temPos, PosList[i]);
+                float tempDis = Vector3.Distance(temPos, PosList[i].GetVector3());
                 if (minDis > tempDis)
                 {
                     minDis = tempDis;
@@ -274,41 +245,41 @@ namespace Assets.Scripts.Element
             currentIndex = nearlyIndex;
             return nearlyIndex;
         }
-        private Collider currentCollider;
-        private void OnTriggerEnter(Collider collider)
-        {
-            if (collider == currentCollider || isviolateTL || !collider.transform.parent.GetComponent<Traffic_Light>()) return;
-            TC = collider.transform.parent.GetComponent<Traffic_Light>();
-            currentCollider = collider;
-            //判断要通过的路口是A还是B
-            path = 0;
-            if (TC.HPA.Contains(collider)) path = 1;
-            else if (TC.HPB.Contains(collider)) path = 2;
-            //开始过路口
-            if (pass == 0)
-            {
-                if (TC.isWait || //黄灯
-                    path != (int)TC.currentMode) //当前红绿灯不让通过
-                {
-                    isMove = false;
-                    isWaitTL = true;
-                }
-                else
-                {
-                    isWaitTL = false;
-                    pass = path;
-                }
-            }
-            //结束过路口
-            else if (pass == path)
-            {
-                pass = 0;
-            }
-        }
+        //private Collider currentCollider;
+        //private void OnTriggerEnter(Collider collider)
+        //{
+        //    if (collider == currentCollider || isviolateTL || !collider.transform.parent.GetComponent<Traffic_Light>()) return;
+        //    TC = collider.transform.parent.GetComponent<Traffic_Light>();
+        //    currentCollider = collider;
+        //    //判断要通过的路口是A还是B
+        //    path = 0;
+        //    if (TC.HPA.Contains(collider)) path = 1;
+        //    else if (TC.HPB.Contains(collider)) path = 2;
+        //    //开始过路口
+        //    if (pass == 0)
+        //    {
+        //        if (TC.isWait || //黄灯
+        //            path != (int)TC.currentMode) //当前红绿灯不让通过
+        //        {
+        //            isMove = false;
+        //            isWaitTL = true;
+        //        }
+        //        else
+        //        {
+        //            isWaitTL = false;
+        //            pass = path;
+        //        }
+        //    }
+        //    //结束过路口
+        //    else if (pass == path)
+        //    {
+        //        pass = 0;
+        //    }
+        //}
 
         public void SetPoslist(int index,Vector3 pos)
         {
-            PosList[index] = pos;
+            PosList[index] =new Vec3( pos);
         }
         public void SetRepeat(bool value)
         {
@@ -317,7 +288,7 @@ namespace Assets.Scripts.Element
         public override void ElementReset()
         {
             base.ElementReset();
-            transform.position = PosList[0];
+            transform.position = PosList[0].GetVector3();
             currentIndex = 0;
             StopCoroutine(SetNextTarget());
         }

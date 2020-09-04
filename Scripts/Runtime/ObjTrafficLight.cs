@@ -3,21 +3,21 @@
 using Assets.Scripts.SimuUI;
 using UnityEditor;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class ObjTrafficLight : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes();
-            ea.isShowCarAI = false;
-            ea.isShowName = true;
-            ea.isShowHuman = false;
-            ea.isShowPos = false;
-            ea.isShowRot = false;
-            ea.isShowSca = false;
-            ea.isShowTraffic = true;
-            ea.isShowDelete = CanDelete;
+            ea.IsShowCarAI = false;
+            ea.IsShowName = true;
+            ea.IsShowHuman = false;
+            ea.IsShowPos = false;
+            ea.IsShowRot = false;
+            ea.IsShowSca = false;
+            ea.IsShowTraffic = true;
+            ea.IsShowDelete = CanDelete;
             ea.Name = transform.name;
             ea.WaitTime = waitTime;
             ea.SwitchTime = switchTime;

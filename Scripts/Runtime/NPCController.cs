@@ -1,30 +1,10 @@
-﻿#region License
-/*
-* Copyright 2018 AutoCore
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-#endregion
-
-
-using Assets.Scripts.SimuUI;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class ObjAICar : ElementObject
+    public class NPCController : ElementObject
     {
         protected override void Start()
         {
@@ -34,156 +14,86 @@ namespace Assets.Scripts.simai
         public Vector3 posInit;//Init position
         public Vector3 posStart;// first aim position
         public Vector3 posAim; //target position
-        private Vector3 posAimTemp; //temp target postion
+        public Vector3 posAimTemp; //temp target postion
+
+        private readonly float maxSpeed = 40;//最大速度
+        public float speedCurrent;//车辆实际速度
+        private float acceleration_Drive = 3;
+        private float acceleration_Break = 5;
+        private float speedAim;//逻辑目标速度
+
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes();
-            ea.IsShowCarAI = true;
-            ea.IsShowDelete = CanDelete;
-            ea.IsShowName = true;
-            ea.IsShowHuman = false;
-            ea.IsShowPos = false;
-            ea.IsShowRot = false;
-            ea.IsShowSca = false;
+            ElementAttbutes ea = new ElementAttbutes(true,false,false,false,true,false,false,CanDelete);
             ea.Name = transform.name;
             ea.Speed = speedObjTarget;
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
             speedObjTarget = attbutes.Speed;
             if (attbutes.PosInit != null) posInit = attbutes.PosInit.GetVector3();
             if (attbutes.PosStart != null) posStart = attbutes.PosStart.GetVector3();
             if (attbutes.PosEnd != null) posAim = attbutes.PosEnd.GetVector3();
         }
-        //车辆是否行驶
-        public bool isCarDrive = false;
-        //检查范围
-        private float checkDistance = 2;
-        //是否前方有交通灯
-        private bool isTrafficLightFront;
-        //是否有人在车前方
-        private bool isHumanFront;
-        private bool isWaitTLLow;
-        private bool isWaitTLStop;
 
+        //车辆是否行驶
+        private bool isCarDrive = false;
+        //检查范围
+        private float minCheckDistance = 2;
+        private bool isWaitTLStop;
         //当前车长度宽度
         private float npc_Width = 2.2f;
         private float npc_extent = 4.3f;
-        private LaneData laneFirst;
-        private int indexLaneFiset;
+
         private LaneData laneCurrent;
         private int indexLane;
-        //当前目标坐标
-        private Vector2 currentAimPos;
-        private readonly float maxSpeed = 40;//最大速度
-        public float speedCurrent;//车辆实际速度
-        private float acceleration_Drive = 3;
-        private float acceleration_Break = 5;
-        private float speedAim;//逻辑目标速度
-        #region 初始化
-        public void CarInit()
+        public override void ElementInit()
         {
-            speedCurrent = 0;
-            if (laneFirst == null) laneFirst = MapManager.Instance.SearchNearestPos2Lane(out indexLaneFiset, posStart);
-            laneCurrent = laneFirst;
-            posAim = laneCurrent.List_pos[indexLaneFiset + 1].GetVector3();
+            base.ElementInit();
+            laneCurrent = MapManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
+            posAimTemp = laneCurrent.List_pos[indexLaneFiset + 1].GetVector3();
             transform.position = posInit;
             indexLane = indexLaneFiset;
             isCarDrive = true;
         }
-        #endregion
-        private float dis2TestCar;
         protected override void Update()
         {
             base.Update();
-            if (isCarDrive)
-            {
-                posAimTemp = laneCurrent.List_pos[indexLane].GetVector3();
-                PositionCheck();
-                ObstacleCheck();
-                CarMove();
-                TrafficLightCheck();
-                SpeedController();
-                DistanceCheck();
-            }
+            posAimTemp = laneCurrent.List_pos[indexLane].GetVector3(); 
+            PositionCheck();
+            ObstacleCheck();
+            TrafficLightCheck(); 
+            SpeedCaculator();
         }
-        bool isChangeLane = false;
-        bool isObstacleFront = false;
-        void ObstacleCheck()
-        {
-            isObstacleFront = false;
-            Vector3 DirCarGo = indexLane - 1 > 0 ? posAimTemp - laneCurrent.List_pos[indexLane - 1].GetVector3() : transform.forward;
-            Vector3 PosCarOrigin = posAimTemp + new Vector3(0, 0.5f, 0) - (npc_extent * DirCarGo.normalized);
-
-            if (RayCheckCar(PosCarOrigin, DirCarGo, out ElementObject element))
-            {
-                var CarAI = element.GetComponent<ObjAICar>();
-                if (CarAI != null)
-                {
-                    isObstacleFront = true;
-                    return;
-                }
-                Vector3 PosLaneLeft = PosCarOrigin + Quaternion.AngleAxis(90, Vector3.up) * DirCarGo * 3;
-                Vector3 PosLaneRight = PosCarOrigin + Quaternion.AngleAxis(-90, Vector3.up) * DirCarGo * 3;
-
-                if (!RayCheckCar(PosLaneLeft, DirCarGo) && CanChangeLaneLeft())
-                {
-                    ChangeLane();
-                }
-                else if (!RayCheckCar(PosLaneRight, DirCarGo) && CanChangeLaneRight())
-                {
-                    ChangeLane();
-                }
-                else
-                {
-                    isObstacleFront = true;
-                }
-            }
-        }
-        private void CarMove()
-        {
-            transform.LookAt(posAimTemp);
-            transform.Translate(transform.forward * Time.deltaTime * speedCurrent, Space.World);
-
-        }
-        private void SpeedController()
-        {
-            if (speedObjTarget > maxSpeed) speedObjTarget = maxSpeed;
-            if (isObstacleFront || isWaitTLStop) speedAim = 0;
-            else speedAim = speedObjTarget;
-            if (speedCurrent < speedAim - 0.1f)
-            {
-                speedCurrent += acceleration_Drive * Time.deltaTime;
-            }
-            else if (speedCurrent > speedAim + 0.1f)
-            {
-                speedCurrent -= acceleration_Break * Time.deltaTime;
-            }
-            else speedCurrent = speedAim;
-        }
+        #region PositionCheck
         private float angle_Front2Aim, angle_Right2Aim;
         private bool isFront, isRight;
+        //车辆与目标相对位置
+        private Vector2 offSet;
+        private Vector3 offset_V3;
         /// <summary>
         /// 判断目标点相对车辆的位置
         /// </summary>
         /// 
-        //车辆与目标相对位置
-        private Vector2 offSet;
-        private Vector3 offset_V3;
         void PositionCheck()
         {
             offset_V3 = posAimTemp - transform.position;
+            angle_Front2Aim = Vector3.Angle(transform.forward, offset_V3);
+            angle_Right2Aim = Vector3.Angle(transform.right, offset_V3);
             offSet = new Vector2(offset_V3.x, offset_V3.z);
-            angle_Front2Aim = Vector2.Angle(new Vector2(transform.forward.x, transform.forward.z), offSet);
-            angle_Right2Aim = Vector3.Angle(new Vector2(transform.right.x, transform.right.z), offSet);
             isFront = angle_Front2Aim < 90 ? true : false;
             isRight = angle_Right2Aim < 90 ? true : false;
         }
+        #endregion
+
+        #region DistanceCheck
+
         public float distanceBrake; //安全距离
         private float distance2Target;
+        //检查范围
+        private float checkDistance = 2;
         void DistanceCheck()
         {
             distanceBrake = speedCurrent * (speedCurrent / acceleration_Break) / 2;
@@ -201,137 +111,12 @@ namespace Assets.Scripts.simai
             if (isHaveTarget && Mathf.Abs(indexLane - indexTarget) < 3 && laneCurrent.List_sameLanesID.Contains(laneTarget.LaneID))
             {
                 isHaveTarget = false;
-                PanelOther.Instance.SetTipText("AI vehicle arrive at target position");
+                //PanelOther.Instance.SetTipText("AI vehicle arrive at target position");
             }
             if (indexLane >= laneCurrent.List_pos.Count)
             {
                 laneCurrent = SearchNextLane();
                 indexLane = 0;
-            }
-        }
-
-        Ray rayElement;
-        LayerMask maskElement = 1 << 9;
-        bool RayCheckCar(Vector3 posOrigin, Vector3 direction)
-        {
-            rayElement = new Ray(posOrigin, direction);
-            if (Physics.Raycast(rayElement, out RaycastHit hitInfo, distanceBrake + 2, maskElement))
-            {
-                var element = hitInfo.transform.GetComponentInParent<ElementObject>();
-                if (element != null && element != this) return true;
-            }
-            return false;
-        }
-        bool RayCheckCar(Vector3 posOrigin, Vector3 direction, out ElementObject element)
-        {
-            rayElement = new Ray(posOrigin, direction);
-            if (Physics.Raycast(rayElement, out RaycastHit hitInfo, distanceBrake + 2, maskElement))
-            {
-                element = hitInfo.transform.GetComponentInParent<ElementObject>();
-                if (element != null && element != this) return true;
-            }
-            element = null;
-            return false;
-        }
-
-        bool ObstacleCheck(Vector3 direction)
-        {
-            float tempMinDis = distanceBrake;
-            foreach (ElementObject element in ElementsManager.Instance.ElementList)
-            {
-                GameObject obj = element.gameObject;
-                if (!obj.activeSelf || obj.transform == transform) continue;   //如果物体没有显示或者为自身
-                float heightDiffrence = obj.transform.position.y - transform.position.y;
-                if (Mathf.Abs(heightDiffrence) > 1.5f) continue;
-                float tempDis = Vector2.Distance(new Vector2(obj.transform.position.x, obj.transform.position.z), new Vector2(transform.position.x, transform.position.z));
-                if (tempDis >= tempMinDis) continue; //如果距离大于最小距离
-                float foreAngle = Vector3.Angle(direction, obj.transform.position - transform.position);//物体与当前车前方的角度
-                if (foreAngle > 60) continue;
-                float dis2Front = tempDis * Mathf.Sin(foreAngle * Mathf.Deg2Rad);
-                if (dis2Front < (npc_Width / 2 + 0.1f))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public ITrafficLight currentTL;//当前目标交通灯
-        private float disRemain;//距离停止线的距离
-        int currentPath2T;//0是有问题，1是APass，2是Bpath
-        private float angle2TL;
-        void TrafficLightCheck()
-        {
-            //当前路段没有红绿灯
-            if (currentTL == null || currentTL.CanPass)
-            {
-                isWaitTLStop = false;
-                return;
-            }
-            angle2TL = Vector3.Angle(currentTL.StopLine.forward, transform.forward);
-            disRemain = Vector3.Distance(currentTL.StopLine.position, transform.position) * Mathf.Cos(angle2TL * Mathf.Deg2Rad);
-            if (angle2TL > 45 && disRemain < 5)
-            {
-                isWaitTLStop = false;
-                return;
-            }
-            else if (disRemain < distanceBrake)
-            {
-                isWaitTLStop = true;
-            }
-        }
-        private LaneData laneChangeTarget;
-        public bool CanChangeLaneLeft()
-        {
-            int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) - 1;
-            if (index >= 0)
-            {
-                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
-                return true;
-            }
-            else return false;
-        }
-        public bool CanChangeLaneRight()
-        {
-            int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) + 1;
-            if (index < laneCurrent.List_sameLanesID.Count)
-            {
-                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
-                return true;
-            }
-            else return false;
-        }
-
-        /// <summary>
-        /// 朝目标lane变道
-        /// </summary>
-        public void ChangeLane()
-        {
-            if (laneChangeTarget == null) Debug.Log("no target lane");
-            if (!laneCurrent.List_sameLanesID.Contains(laneChangeTarget.LaneID)) Debug.Log("not SameLane");
-            Vector3 posCar = transform.position;
-            float disMin = Vector3.Distance(laneChangeTarget.List_pos[0].GetVector3(), posCar);
-            int index = 0;
-            int countLane = laneChangeTarget.List_pos.Count;
-            for (int i = 1; i < countLane; i++)
-            {
-                float disTemp = Vector3.Distance(laneChangeTarget.List_pos[i].GetVector3(), posCar);
-                if (disTemp < disMin)
-                {
-                    disMin = disTemp;
-                    index = i;
-                }
-            }
-            int lenth = (int)(distanceBrake - npc_extent);
-            if (lenth < 3) lenth = 3;
-            index += lenth;
-            if (index >= countLane) index = countLane - 1;
-            Vector3 direction = laneChangeTarget.List_pos[index].GetVector3() - transform.position;
-            if (!ObstacleCheck(direction))
-            {
-                laneCurrent = laneChangeTarget;
-                indexLane = index;
-                isChangeLane = true;
             }
         }
 
@@ -368,6 +153,181 @@ namespace Assets.Scripts.simai
                 }
             }
         }
+        #endregion
+
+        #region ObstacleCheck
+
+        protected bool isObstacleFront = false;
+        void ObstacleCheck()
+        {
+            isObstacleFront = false;
+            Vector3 DirCarGo = indexLane - 1 > 0 ? posAimTemp - laneCurrent.List_pos[indexLane - 1].GetVector3() : transform.forward;
+            Vector3 PosCarOrigin = posAimTemp + new Vector3(0, 0.5f, 0) - (npc_extent * DirCarGo.normalized);
+
+            if (RayCheckCar(PosCarOrigin, DirCarGo, out ElementObject element))
+            {
+                var CarAI = element.GetComponent<ObjAICar>();
+                if (CarAI != null)
+                {
+                    isObstacleFront = true;
+                    return;
+                }
+                Vector3 PosLaneLeft = PosCarOrigin + Quaternion.AngleAxis(90, Vector3.up) * DirCarGo * 3;
+                Vector3 PosLaneRight = PosCarOrigin + Quaternion.AngleAxis(-90, Vector3.up) * DirCarGo * 3;
+
+                if (!RayCheckCar(PosLaneLeft, DirCarGo) && CanChangeLaneLeft())
+                {
+                    ChangeLane();
+                }
+                else if (!RayCheckCar(PosLaneRight, DirCarGo) && CanChangeLaneRight())
+                {
+                    ChangeLane();
+                }
+                else
+                {
+                    isObstacleFront = true;
+                }
+            }
+        }
+        bool ObstacleCheck(Vector3 direction)
+        {
+            float tempMinDis = distanceBrake;
+            foreach (ElementObject element in ElementsManager.Instance.ElementList)
+            {
+                GameObject obj = element.gameObject;
+                if (!obj.activeSelf || obj.transform == transform) continue;   //如果物体没有显示或者为自身
+                float heightDiffrence = obj.transform.position.y - transform.position.y;
+                if (Mathf.Abs(heightDiffrence) > 1.5f) continue;
+                float tempDis = Vector2.Distance(new Vector2(obj.transform.position.x, obj.transform.position.z), new Vector2(transform.position.x, transform.position.z));
+                if (tempDis >= tempMinDis) continue; //如果距离大于最小距离
+                float foreAngle = Vector3.Angle(direction, obj.transform.position - transform.position);//物体与当前车前方的角度
+                if (foreAngle > 60) continue;
+                float dis2Front = tempDis * Mathf.Sin(foreAngle * Mathf.Deg2Rad);
+                if (dis2Front < (npc_Width / 2 + 0.1f))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        Ray rayElement;
+        LayerMask maskElement = 1 << 9;
+        bool RayCheckCar(Vector3 posOrigin, Vector3 direction)
+        {
+            rayElement = new Ray(posOrigin, direction);
+            if (Physics.Raycast(rayElement, out RaycastHit hitInfo, distanceBrake + 2, maskElement))
+            {
+                var element = hitInfo.transform.GetComponentInParent<ElementObject>();
+                if (element != null && element != this) return true;
+            }
+            return false;
+        }
+        bool RayCheckCar(Vector3 posOrigin, Vector3 direction, out ElementObject element)
+        {
+            rayElement = new Ray(posOrigin, direction);
+            if (Physics.Raycast(rayElement, out RaycastHit hitInfo, distanceBrake + 2, maskElement))
+            {
+                element = hitInfo.transform.GetComponentInParent<ElementObject>();
+                if (element != null && element != this) return true;
+            }
+            element = null;
+            return false;
+        }
+        private LaneData laneChangeTarget;
+        public bool CanChangeLaneLeft()
+        {
+            int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) - 1;
+            if (index >= 0)
+            {
+                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                return true;
+            }
+            else return false;
+        }
+        public bool CanChangeLaneRight()
+        {
+            int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) + 1;
+            if (index < laneCurrent.List_sameLanesID.Count)
+            {
+                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                return true;
+            }
+            else return false;
+        }
+        /// <summary>
+        /// 朝目标lane变道
+        /// </summary>
+        public void ChangeLane()
+        {
+            if (laneChangeTarget == null) Debug.Log("no target lane");
+            if (!laneCurrent.List_sameLanesID.Contains(laneChangeTarget.LaneID)) Debug.Log("not SameLane");
+            Vector3 posCar = transform.position;
+            float disMin = Vector3.Distance(laneChangeTarget.List_pos[0].GetVector3(), posCar);
+            int index = 0;
+            int countLane = laneChangeTarget.List_pos.Count;
+            for (int i = 1; i < countLane; i++)
+            {
+                float disTemp = Vector3.Distance(laneChangeTarget.List_pos[i].GetVector3(), posCar);
+                if (disTemp < disMin)
+                {
+                    disMin = disTemp;
+                    index = i;
+                }
+            }
+            int lenth = (int)(distanceBrake - npc_extent);
+            if (lenth < 3) lenth = 3;
+            index += lenth;
+            if (index >= countLane) index = countLane - 1;
+            Vector3 direction = laneChangeTarget.List_pos[index].GetVector3() - transform.position;
+            if (!ObstacleCheck(direction))
+            {
+                laneCurrent = laneChangeTarget;
+                indexLane = index;
+            }
+        }
+        #endregion
+
+        #region TrafficLight Check
+
+        public ITrafficLight currentTL;//当前目标交通灯
+        private float disRemain;//距离停止线的距离
+        int currentPath2T;//0是有问题，1是APass，2是Bpath
+        private float angle2TL;
+        void TrafficLightCheck()
+        {
+            //当前路段没有红绿灯
+            if (currentTL == null || currentTL.CanPass)
+            {
+                isWaitTLStop = false;
+                return;
+            }
+            angle2TL = Vector3.Angle(currentTL.StopLine.forward, transform.forward);
+            disRemain = Vector3.Distance(currentTL.StopLine.position, transform.position) * Mathf.Cos(angle2TL * Mathf.Deg2Rad);
+            if (angle2TL > 45 && disRemain < 5)
+            {
+                isWaitTLStop = false;
+                return;
+            }
+            else if (disRemain < distanceBrake)
+            {
+                isWaitTLStop = true;
+            }
+        }
+
+        #endregion
+
+        #region Speed Caculator
+
+        private void SpeedCaculator()
+        {
+            if (speedObjTarget > maxSpeed) speedObjTarget = maxSpeed;
+            if (isObstacleFront || isWaitTLStop) speedAim = 0;
+            else speedAim = speedObjTarget;
+        }
+        #endregion
+
+        #region Set target
 
         private bool isHaveTarget;
         LaneData laneTarget;
@@ -464,11 +424,6 @@ namespace Assets.Scripts.simai
             }
         }
 
-        public override void ElementReset()
-        {
-            base.ElementReset();
-            SetObjAttbutes(objAttbutes);
-        }
+        #endregion
     }
-
 }

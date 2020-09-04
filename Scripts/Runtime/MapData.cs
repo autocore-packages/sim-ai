@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
 
     //public class Vec3

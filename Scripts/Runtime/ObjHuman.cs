@@ -23,20 +23,20 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class ObjHuman : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes();
-            ea.isShowCarAI = false;
-            ea.isShowDelete = CanDelete;
-            ea.isShowName = true;
-            ea.isShowHuman = true;
-            ea.isShowPos = false;
-            ea.isShowRot = false;
-            ea.isShowSca = false;
+            ea.IsShowCarAI = false;
+            ea.IsShowDelete = CanDelete;
+            ea.IsShowName = true;
+            ea.IsShowHuman = true;
+            ea.IsShowPos = false;
+            ea.IsShowRot = false;
+            ea.IsShowSca = false;
             ea.IsRepeat = isHumanRepeat;
             ea.Name = transform.name;
             ea.Speed = speedObjTarget;

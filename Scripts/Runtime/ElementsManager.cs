@@ -21,7 +21,7 @@ using Assets.Scripts.SimuUI;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class ElementsManager : MonoBehaviour
     {
@@ -38,11 +38,13 @@ namespace Assets.Scripts.Element
             }
         }
 
+        
+
         public bool IsInEdit { get; set; } = false;
         public ObjTestCar testCar;
         public List<ObjObstacle> ObstacleList = new List<ObjObstacle>();
         public List<ObjHuman> HumanList = new List<ObjHuman>();
-        public List<ElementObject> CarList = new List<ElementObject>();
+        public List<ObjAICar> CarList = new List<ObjAICar>();
         public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
         public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
         public List<ElementObject> ElementList = new List<ElementObject>();
@@ -76,13 +78,36 @@ namespace Assets.Scripts.Element
                     }
                     else
                     {
-                        PanelInspector.Instance.InspectorInit(_elementObject.GetObjAttbutes());
+                        //PanelInspector.Instance.InspectorInit(_elementObject.GetObjAttbutes());
                     }
                 }
             }
         }
 
         public Vector3 MouseWorldPos;
+
+        private Vector3 PosDragStart;
+        private Vector3 MousePosDragStart;
+        public void ElementStartDrag(ElementObject elementObject)
+        {
+            SelectedElement = elementObject;
+            if (elementObject.CanDrag)
+            {
+                MousePosDragStart = MouseWorldPos;
+                PosDragStart = elementObject.transform.position;
+            }
+        }
+        public void ElementDraging()
+        {
+            if (SelectedElement.CanDrag)
+            {
+                SelectedElement.transform.position = PosDragStart + MouseWorldPos - MousePosDragStart;
+            }
+        }
+        public void FollowMouse(ElementObject elementObject)
+        {
+            elementObject.transform.position =MouseWorldPos + elementObject.offsetPos;
+        }
 
         private void Awake()
         {
@@ -111,22 +136,16 @@ namespace Assets.Scripts.Element
             AICar = (GameObject)Resources.Load("Elements/AutoDriveCar");
             CheckPoint = (GameObject)Resources.Load("Elements/CheckPoint");
             Obstalce = (GameObject)Resources.Load("Elements/Static");
-
-            var lr = transform.GetComponent<LineRenderer>();
-            if (lr == null) lr = gameObject.AddComponent<LineRenderer>();
-            if (lineRenderer == null) lineRenderer = lr;
-            lineRenderer.enabled = false;
-
-
+            locusLR.enabled = false;
         }
         private void Update()
         {
-            if (SelectedElement != null) PanelInspector.Instance.InspectorUpdate(SelectedElement.GetObjAttbutes());
+            //if (SelectedElement != null) PanelInspector.Instance.InspectorUpdate(SelectedElement.GetObjAttbutes());
             if (isShowLine)
             {
                 SetLineRenderer(LinePoses);
             }
-            else if (lineRenderer.enabled) lineRenderer.enabled = false;
+            else if (locusLR.enabled) locusLR.enabled = false;
         }
 
         public ObjAICar AddCarAI(Vector3 pos)
@@ -179,14 +198,14 @@ namespace Assets.Scripts.Element
             var eleObj = obj.GetComponent<ElementObject>();
             RemoveElementFromList(eleObj);
         }
-        private void RemoveElementFromList(ElementObject elementObject)
+        public void RemoveElementFromList(ElementObject elementObject)
         {
             if (!elementObject.CanDelete) return;
-            if (elementObject.GetComponent<ObjObstacle>() != null) ObstacleList.Remove((ObjObstacle)elementObject);
-            else if (elementObject.GetComponent<ObjCheckPoint>() != null) CheckPointList.Remove((ObjCheckPoint)elementObject);
-            else if (elementObject.GetComponent<ObjHuman>() != null) HumanList.Remove((ObjHuman)elementObject);
-            else if (elementObject.GetComponent<ObjAICar>() != null) CarList.Remove(elementObject);
-            else if (elementObject.GetComponent<ObjTrafficLight>() != null) TrafficLightList.Remove((ObjTrafficLight)elementObject);
+            if (elementObject is ObjObstacle obstacle) ObstacleList.Remove(obstacle);
+            else if (elementObject is ObjCheckPoint point) CheckPointList.Remove(point);
+            else if (elementObject is ObjHuman human) HumanList.Remove(human);
+            else if (elementObject is ObjAICar npc) CarList.Remove(npc);
+            else if (elementObject is ObjTrafficLight light1) TrafficLightList.Remove(light1);
             if (ElementList.Contains(elementObject)) ElementList.Remove(elementObject);
             Destroy(elementObject);
             SelectedElement = null;
@@ -204,13 +223,12 @@ namespace Assets.Scripts.Element
             HumanList.Clear();
             CarList.Clear();
             CheckPointList.Clear();
-            CarList.Add(testCar);
             SelectedElement = null;
         }
 
         public void AddCarElement(ElementObject obj)
         {
-            CarList.Add(obj);
+            CarList.Add((ObjAICar)obj);
         }
         public void AddTrafficLightElement(ElementObject obj)
         {
@@ -229,7 +247,15 @@ namespace Assets.Scripts.Element
             CheckPointList.Add((ObjCheckPoint)obj);
         }
 
-        private LineRenderer lineRenderer;
+        private LineRenderer locusLR;
+        private LineRenderer LocusLR
+        {
+            get
+            {
+                if (locusLR == null) locusLR = GetComponent<LineRenderer>();
+                return locusLR;
+            }
+        }
         private void SetLineRenderer(Vector3[] postions)
         {
             Vector3[] Poses = new Vector3[postions.Length];
@@ -237,9 +263,16 @@ namespace Assets.Scripts.Element
             {
                 Poses[i] = postions[i] + Vector3.up * 3;
             }
-            if (!lineRenderer.enabled) lineRenderer.enabled = true;
-            lineRenderer.positionCount = Poses.Length;
-            lineRenderer.SetPositions(Poses);
+            if (!LocusLR.enabled) LocusLR.enabled = true;
+            LocusLR.positionCount = Poses.Length;
+            LocusLR.SetPositions(Poses);
+        }
+        public void ResetAllElements()
+        {
+            foreach (ElementObject item in ElementList)
+            {
+                item.ElementReset();
+            }
         }
     }
 }

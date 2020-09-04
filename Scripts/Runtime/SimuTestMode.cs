@@ -17,12 +17,12 @@
 #endregion
 
 
-using Assets.Scripts.Element;
+using Assets.Scripts.simai;
 using Assets.Scripts.SimuUI;
 using System;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     [Serializable]
     public class SimuTestMode

@@ -20,20 +20,20 @@ using Assets.Scripts.SimuUI;
 using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class ObjCheckPoint : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes();
-            ea.isShowCarAI = false;
-            ea.isShowName = true;
-            ea.isShowHuman = false;
-            ea.isShowPos = true;
-            ea.isShowRot = true;
-            ea.isShowSca = true;
-            ea.isShowDelete = CanDelete;
+            ea.IsShowCarAI = false;
+            ea.IsShowName = true;
+            ea.IsShowHuman = false;
+            ea.IsShowPos = true;
+            ea.IsShowRot = true;
+            ea.IsShowSca = true;
+            ea.IsShowDelete = CanDelete;
             ea.Name = transform.name;
             ea.TransformData = new TransformData(transform);
             return ea;

@@ -7,7 +7,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class LogicButton : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler
     {
@@ -28,14 +28,14 @@ namespace Assets.Scripts.Element
         {
             if (obj != null && !ElementsManager.Instance.IsInEdit && eventData.button == PointerEventData.InputButton.Left)
             {
-                obj.StartDrag();
+                ElementsManager.Instance.ElementStartDrag(obj);
             }
         }
         public void OnDrag(PointerEventData eventData)
         {
             if (obj != null && !ElementsManager.Instance.IsInEdit && eventData.button == PointerEventData.InputButton.Left)
             {
-                obj.ObjDrag();
+                ElementsManager.Instance.ElementDraging();
             }
         }
         private void OnDestroy()

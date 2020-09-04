@@ -20,7 +20,7 @@
 using Assets.Scripts.SimuUI;
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class MapManager:MonoBehaviour
     {

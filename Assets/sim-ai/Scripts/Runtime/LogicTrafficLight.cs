@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class LogicTrafficLight : LogicObj
     {

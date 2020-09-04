@@ -22,19 +22,58 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
+    public class ElementAttbutes
+    {
+        public ElementAttbutes() { }
+
+        public ElementAttbutes(
+            bool name,
+            bool pos,
+            bool rot,
+            bool scale,
+            bool npc,
+            bool ped,
+            bool light,
+            bool delete
+            )
+        {
+            IsShowName = name;
+            IsShowPos = pos;
+            IsShowRot = rot;
+            IsShowSca = scale;
+            IsShowCarAI = npc;
+            IsShowHuman = ped;
+            IsShowTraffic = light;
+            IsShowDelete = delete;
+        }
+
+        public bool IsShowName { get; set; }
+        public bool IsShowPos { get; set; }
+        public bool IsShowRot { get; set; }
+        public bool IsShowSca { get; set; }
+        public bool IsShowCarAI { get; set; }
+        public bool IsShowHuman { get; set; }
+        public bool IsShowTraffic { get; set; }
+        public bool IsShowDelete { get; set; }
+        public bool IsAuto { get; set; }
+        public float WaitTime { get; set; }
+        public float SwitchTime { get; set; }
+        public bool IsRepeat { get; set; }
+        public List<Vec3> PosArray { get; set; }
+        public bool IsWait { get; set; }
+        public TransformData TransformData { get; set; }
+        public Vec3 PosEnd { get; set; }
+        public Vec3 PosStart { get; set; }
+        public int lightMode { get; set; }
+        public float Speed { get; set; }
+        public string Name { get; set; }
+        public Vec3 PosInit { get; set; }
+        public bool canDelete { get; set; }
+    }
     public class ElementObject : MonoBehaviour
     {
-        public enum ElementAttribute
-        {
-            Position,
-            Rotation,
-            Scale,
-            Human,
-            TrafficLight,
-            CarAI
-        }
         public ElementAttbutes objAttbutes;
         public GameObject elementButton;
         public LogicObj logicObject;
@@ -49,20 +88,16 @@ namespace Assets.Scripts.Element
         public Vector3 v3Scale;
         public Vector3 offsetPos;
         public float speedObjTarget;
-        public void StartDrag()
-        {
-            if (CanDrag)
-            {
-                MousePosDragStart = ElementsManager.Instance.MouseWorldPos;
-                PosDragStart = transform.position;
-            }
-        }
         public virtual ElementAttbutes GetObjAttbutes()
         {
             return new ElementAttbutes();
         }
         public virtual void SetObjAttbutes(ElementAttbutes attbutes)
         {
+        }
+        public virtual void ElementInit()
+        {
+
         }
         private void OnDestroy()
         {
@@ -75,59 +110,32 @@ namespace Assets.Scripts.Element
         }
         protected virtual void Start()
         {
-            PanelInspector.Instance.ElementUpdate += SetObjAttbutes;
+            //PanelInspector.Instance.ElementUpdate += SetObjAttbutes;
             objAttbutes = GetObjAttbutes();
             InitElement();
         }
         private void InitElement()
         {
-            if (elementButton == null)
-            {
-                var objTC = GetComponent<ObjTestCar>();
-                if (objTC != null)
-                {
-                    gameObject.name = "EgoVehicle";
-                }
-                var objO = GetComponent<ObjObstacle>();
-                if (objO != null)
-                {
-                    gameObject.name = "Static Obstacle" + ElementsManager.Instance.ObstacleList.Count;
-                }
-                var objH = GetComponent<ObjHuman>();
-                if (objH != null)
-                {
-                    gameObject.name = "Human" + ElementsManager.Instance.HumanList.Count;
-                }
-                var objTL = GetComponent<ObjTrafficLight>();
-                if (objTL != null)
-                {
-                    gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.Count;
-                }
-                var objAC = GetComponent<ObjAICar>();
-                if (objAC != null)
-                {
-                    gameObject.name = "Ai Vehicle" + ElementsManager.Instance.CarList.Count;
-                }
-                var objCP = GetComponent<ObjCheckPoint>();
-                if (objCP != null)
-                {
-                    gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.Count;
-                }
-            }
+            //if (elementButton == null)
+            //{
+                
+            //}
 
             if (!ElementsManager.Instance.ElementList.Contains(this))
             {
                 ElementsManager.Instance.ElementList.Add(this);
-                AddLogic();
             }
+            SetElementName();
+            SetLogicObj();
         }
         protected virtual void Update()
         {
 
         }
 
-        private void AddLogic()
+        private void SetLogicObj()
         {
+            if (logicObject != null) return;
             GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + nameLogic);
             if (logictemp != null)
             {
@@ -145,22 +153,42 @@ namespace Assets.Scripts.Element
             transform.name = name;
             elementButton.transform.GetChild(0).GetComponent<Text>().text = name;
         }
-        public void ObjDrag()
-        {
-            if (CanDrag)
-            {
-                transform.position = PosDragStart + ElementsManager.Instance.MouseWorldPos - MousePosDragStart;
-            }
-        }
-        public void FollowMouse()
-        {
-            transform.position = ElementsManager.Instance.MouseWorldPos + offsetPos;
-        }
         public void SetObjScale(float value)
         {
             if (!CanScale) return;
             v3Scale = new Vector3(v3Scale.x * value, v3Scale.y * value, v3Scale.z * value);
             transform.localScale = v3Scale;
+        }
+        public void SetElementName(string value)
+        {
+            gameObject.name = value;
+        }
+        private void SetElementName()
+        {
+            if (this is ObjTestCar)
+            {
+                gameObject.name = "EgoVehicle";
+            }
+            else if (this is ObjObstacle)
+            {
+                gameObject.name = "Static Obstacle" + ElementsManager.Instance.ObstacleList.Count;
+            }
+            else if (this is ObjHuman)
+            {
+                gameObject.name = "Human" + ElementsManager.Instance.HumanList.Count;
+            }
+            else if (this is ObjTrafficLight)
+            {
+                gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.Count;
+            }
+            else if (this is ObjAICar)
+            {
+                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.CarList.Count;
+            }
+            else if (this is ObjCheckPoint)
+            {
+                gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.Count;
+            }
         }
         public virtual void ElementReset()
         {

@@ -5,7 +5,7 @@
 #endregion
 using UnityEngine;
 
-namespace Assets.Scripts.Element
+namespace Assets.Scripts.simai
 {
     public class LogicObj : MonoBehaviour
     {

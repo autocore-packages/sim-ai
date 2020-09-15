@@ -10,6 +10,9 @@ namespace Assets.Scripts.simai
         {
             nameLogic = "GreenCarLogic";
             base.Start();
+            CanScale = false;
+            CanDrag = false;
+            CanDelete = true;
         }
         public Vector3 posInit;//Init position
         public Vector3 posStart;// first aim position

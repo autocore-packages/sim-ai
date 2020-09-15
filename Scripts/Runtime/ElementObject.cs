@@ -16,62 +16,12 @@
 */
 #endregion
 using Assets.Scripts;
-using Assets.Scripts.SimuUI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.simai
 {
-    public class ElementAttbutes
-    {
-        public ElementAttbutes() { }
-
-        public ElementAttbutes(
-            bool name,
-            bool pos,
-            bool rot,
-            bool scale,
-            bool npc,
-            bool ped,
-            bool light,
-            bool delete
-            )
-        {
-            IsShowName = name;
-            IsShowPos = pos;
-            IsShowRot = rot;
-            IsShowSca = scale;
-            IsShowCarAI = npc;
-            IsShowHuman = ped;
-            IsShowTraffic = light;
-            IsShowDelete = delete;
-        }
-
-        public bool IsShowName { get; set; }
-        public bool IsShowPos { get; set; }
-        public bool IsShowRot { get; set; }
-        public bool IsShowSca { get; set; }
-        public bool IsShowCarAI { get; set; }
-        public bool IsShowHuman { get; set; }
-        public bool IsShowTraffic { get; set; }
-        public bool IsShowDelete { get; set; }
-        public bool IsAuto { get; set; }
-        public float WaitTime { get; set; }
-        public float SwitchTime { get; set; }
-        public bool IsRepeat { get; set; }
-        public List<Vec3> PosArray { get; set; }
-        public bool IsWait { get; set; }
-        public TransformData TransformData { get; set; }
-        public Vec3 PosEnd { get; set; }
-        public Vec3 PosStart { get; set; }
-        public int lightMode { get; set; }
-        public float Speed { get; set; }
-        public string Name { get; set; }
-        public Vec3 PosInit { get; set; }
-        public bool canDelete { get; set; }
-    }
     public class ElementObject : MonoBehaviour
     {
         public ElementAttbutes objAttbutes;
@@ -97,6 +47,15 @@ namespace Assets.Scripts.simai
         }
         public virtual void ElementInit()
         {
+            if (!ElementsManager.Instance.ElementList.Contains(this))
+            {
+                ElementsManager.Instance.ElementList.Add(this);
+            }
+            SetElementName();
+            SetLogicObj();
+        }
+        public virtual void UpdateElementAttribute()
+        {
 
         }
         private void OnDestroy()
@@ -110,23 +69,7 @@ namespace Assets.Scripts.simai
         }
         protected virtual void Start()
         {
-            //PanelInspector.Instance.ElementUpdate += SetObjAttbutes;
-            objAttbutes = GetObjAttbutes();
-            InitElement();
-        }
-        private void InitElement()
-        {
-            //if (elementButton == null)
-            //{
-                
-            //}
-
-            if (!ElementsManager.Instance.ElementList.Contains(this))
-            {
-                ElementsManager.Instance.ElementList.Add(this);
-            }
-            SetElementName();
-            SetLogicObj();
+            ElementInit();
         }
         protected virtual void Update()
         {
@@ -148,23 +91,20 @@ namespace Assets.Scripts.simai
                 Debug.LogError("LogicObj missing");
             }
         }
-        public void SetName(string name)
-        {
-            transform.name = name;
-            elementButton.transform.GetChild(0).GetComponent<Text>().text = name;
-        }
         public void SetObjScale(float value)
         {
             if (!CanScale) return;
             v3Scale = new Vector3(v3Scale.x * value, v3Scale.y * value, v3Scale.z * value);
             transform.localScale = v3Scale;
         }
-        public void SetElementName(string value)
-        {
-            gameObject.name = value;
-        }
         private void SetElementName()
         {
+            if (objAttbutes != null)
+            {
+                gameObject.name = objAttbutes.Name;
+                return;
+            }
+
             if (this is ObjTestCar)
             {
                 gameObject.name = "EgoVehicle";

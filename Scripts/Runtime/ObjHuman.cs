@@ -63,7 +63,7 @@ namespace Assets.Scripts.simai
         public List<Vec3> PosList=new List<Vec3>();
         public List<Vector3> Aims
         {
-            get
+            get 
             {
                 List<Vector3> list = new List<Vector3>();
                 foreach (var item in PosList)
@@ -100,7 +100,7 @@ namespace Assets.Scripts.simai
             pass = 0;
         }
 
-        private float distance_Target;//与当前目标点的距离
+        private float remainDistance;//与当前目标点的距离
         Ray ray;
         private bool isObstacleAhead = false;
         protected override void Update()
@@ -108,9 +108,9 @@ namespace Assets.Scripts.simai
             base.Update();
             if (PosList.Count < 1) return;
             ray = new Ray(transform.position + Vector3.up, transform.forward);
-            distance_Target = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(PosList[currentIndex].X, PosList[currentIndex].Z));
+            remainDistance = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(PosList[currentIndex].X, PosList[currentIndex].Z));
 
-            if (distance_Target > 0.1f)
+            if (remainDistance > 0.1f)
             {
                 transform.LookAt(PosList[currentIndex].GetVector3());
             }
@@ -292,5 +292,5 @@ namespace Assets.Scripts.simai
             currentIndex = 0;
             StopCoroutine(SetNextTarget());
         }
-    }
+    } 
 }

@@ -6,15 +6,14 @@ namespace Assets.Scripts.simai
 {
     public class NPCManager : MonoBehaviour
     {
-        public List<NPCController> CarList = new List<NPCController>();
-        public ElementsManager elementsManager;
+        public List<NPCController> NPCList = new List<NPCController>();
         public GameObject[] NPCPrefabs;
 
 
         public void AddNPC(int npcYype=0)
         {
-            GameObject npc = Instantiate(NPCPrefabs[npcYype]);
-            ElementsManager.Instance.ElementList.Add(npc.GetComponent<ElementObject>());
+            GameObject npc = Instantiate(NPCPrefabs[npcYype],transform);
+            NPCList.Add(npc.GetComponent<NPCController>());
         }
     }
 

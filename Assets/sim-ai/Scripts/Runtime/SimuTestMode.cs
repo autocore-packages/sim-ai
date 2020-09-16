@@ -18,7 +18,6 @@
 
 
 using Assets.Scripts.simai;
-using Assets.Scripts.SimuUI;
 using System;
 using System.Collections.Generic;
 

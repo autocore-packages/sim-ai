@@ -17,7 +17,7 @@
 #endregion
 
 
-using Assets.Scripts.SimuUI;
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,21 +41,25 @@ namespace Assets.Scripts.simai
         
 
         public bool IsInEdit { get; set; } = false;
-        public ObjTestCar testCar;
-        public List<ObjObstacle> ObstacleList = new List<ObjObstacle>();
-        public List<ObjHuman> HumanList = new List<ObjHuman>();
-        public List<ObjAICar> CarList = new List<ObjAICar>();
-        public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
-        public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
+
+        public EgoController testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
-        private Transform ObstacleParent;
-        private Transform HumanParent;
-        private Transform AIcarParent;
-        private Transform CheckPointParent;
-        private GameObject Human;
-        private GameObject Obstalce;
-        private GameObject AICar;
-        private GameObject CheckPoint;
+
+        public GameObject NPCManager;
+        public NPCManager nPCManager;
+
+        public GameObject PedestrianManager;
+        public PedestrianManager pedestrianManager;
+
+        public GameObject ObstacleManager;
+        public ObstacleManager obstacleManager;
+
+        public GameObject TrafficlghtManager;
+        public TrafficlightManager trafficlightManager;
+
+        public GameObject CheckPointManager;
+        public CheckPointManager checkPointManager;
+
 
         private GameObject objTemp;
 
@@ -72,14 +76,6 @@ namespace Assets.Scripts.simai
                 if (value != _elementObject)
                 {
                     _elementObject = value;
-                    if (_elementObject == null)
-                    {
-                        PanelInspector.Instance.SetPanelActive(false);
-                    }
-                    else
-                    {
-                        //PanelInspector.Instance.InspectorInit(_elementObject.GetObjAttbutes());
-                    }
                 }
             }
         }
@@ -112,6 +108,12 @@ namespace Assets.Scripts.simai
         private void Awake()
         {
             _instance = this;
+            if(nPCManager==null) nPCManager = Instantiate(NPCManager,transform).GetComponent<NPCManager>();
+            if(pedestrianManager==null) pedestrianManager = Instantiate(PedestrianManager, transform).GetComponent<PedestrianManager>();
+            if (obstacleManager == null) obstacleManager = Instantiate(ObstacleManager, transform).GetComponent<ObstacleManager>();
+            if (checkPointManager == null) checkPointManager = Instantiate(checkPointManager, transform).GetComponent<CheckPointManager>();
+            if (trafficlightManager == null) trafficlightManager = Instantiate(TrafficlghtManager, transform).GetComponent<TrafficlightManager>();
+
         }
 
         public bool isShowLine;
@@ -120,27 +122,10 @@ namespace Assets.Scripts.simai
         bool isCursorSeted = false;
         private void Start()
         {
-            GameObject GO = new GameObject("Obstacles");
-            ObstacleParent = GO.transform;
-            ObstacleParent.SetParent(transform);
-            GameObject GH = new GameObject("Humans");
-            HumanParent = GH.transform;
-            HumanParent.SetParent(transform);
-            GameObject GC = new GameObject("AICars");
-            AIcarParent = GC.transform;
-            AIcarParent.SetParent(transform);
-            GameObject GCP = new GameObject("CheckPoints");
-            CheckPointParent = GC.transform;
-            CheckPointParent.SetParent(transform);
-            Human = (GameObject)Resources.Load("Elements/AIHuman");
-            AICar = (GameObject)Resources.Load("Elements/AutoDriveCar");
-            CheckPoint = (GameObject)Resources.Load("Elements/CheckPoint");
-            Obstalce = (GameObject)Resources.Load("Elements/Static");
             locusLR.enabled = false;
         }
         private void Update()
         {
-            //if (SelectedElement != null) PanelInspector.Instance.InspectorUpdate(SelectedElement.GetObjAttbutes());
             if (isShowLine)
             {
                 SetLineRenderer(LinePoses);
@@ -148,47 +133,7 @@ namespace Assets.Scripts.simai
             else if (locusLR.enabled) locusLR.enabled = false;
         }
 
-        public ObjAICar AddCarAI(Vector3 pos)
-        {
-            objTemp = Instantiate(AICar, pos, Quaternion.identity, AIcarParent);
-            objTemp.name = "AI Vehicle" + CarList.Count;
-            return objTemp.GetComponent<ObjAICar>();
-        }
-        public ObjAICar AddCarAI(Vector3 pos, string name)
-        {
-            objTemp = Instantiate(AICar, pos, Quaternion.identity, AIcarParent);
-            objTemp.name = name;
-            return objTemp.GetComponent<ObjAICar>();
-        }
-        public ObjHuman AddHuman(Vector3 pos)
-        {
-            objTemp = Instantiate(Human, pos, Quaternion.identity, HumanParent);
-            objTemp.name = "Pedestrian" + HumanList.Count;
-            return objTemp.GetComponent<ObjHuman>();
-        }
-        public ObjHuman AddHuman(Vec3 pos, string name)
-        {
-            objTemp = Instantiate(Human, pos.GetVector3(), Quaternion.identity, HumanParent);
-            objTemp.name = name;
-            return objTemp.GetComponent<ObjHuman>();
-        }
-        public ObjObstacle AddObstacle(Vec3 pos, Vec3 rot, Vec3 scale, string name)
-        {
-            objTemp = Instantiate(Obstalce, pos.GetVector3(), Quaternion.Euler(rot.GetVector3()), ObstacleParent);
-            objTemp.transform.localScale = scale.GetVector3();
-            objTemp.name = name;
-            objTemp.tag = "Obstacle";
-            return objTemp.GetComponent<ObjObstacle>();
-        }
-
-        public ObjCheckPoint AddCheckPoint(Vec3 pos, Vec3 rot, Vec3 scale, string name)
-        {
-            objTemp = Instantiate(CheckPoint, pos.GetVector3(), Quaternion.Euler(rot.GetVector3()), CheckPointParent);
-            objTemp.name = name;
-            return objTemp.GetComponent<ObjCheckPoint>();
-        }
-
-        public void RemoveElement()
+        public void RemoveSelectedElement()
         {
             var obj = SelectedElement;
             RemoveElementFromList(obj);
@@ -201,13 +146,7 @@ namespace Assets.Scripts.simai
         public void RemoveElementFromList(ElementObject elementObject)
         {
             if (!elementObject.CanDelete) return;
-            if (elementObject is ObjObstacle obstacle) ObstacleList.Remove(obstacle);
-            else if (elementObject is ObjCheckPoint point) CheckPointList.Remove(point);
-            else if (elementObject is ObjHuman human) HumanList.Remove(human);
-            else if (elementObject is ObjAICar npc) CarList.Remove(npc);
-            else if (elementObject is ObjTrafficLight light1) TrafficLightList.Remove(light1);
-            if (ElementList.Contains(elementObject)) ElementList.Remove(elementObject);
-            Destroy(elementObject);
+            elementObject.DestroyElement();
             SelectedElement = null;
         }
 
@@ -219,32 +158,7 @@ namespace Assets.Scripts.simai
                 if (!Element.CanDelete) continue;
                 Destroy(Element.gameObject);
             }
-            ObstacleList.Clear();
-            HumanList.Clear();
-            CarList.Clear();
-            CheckPointList.Clear();
             SelectedElement = null;
-        }
-
-        public void AddCarElement(ElementObject obj)
-        {
-            CarList.Add((ObjAICar)obj);
-        }
-        public void AddTrafficLightElement(ElementObject obj)
-        {
-            TrafficLightList.Add((ObjTrafficLight)obj);
-        }
-        public void AddHumanElement(ElementObject obj)
-        {
-            HumanList.Add((ObjHuman)obj);
-        }
-        public void AddObstacleElement(ElementObject obj)
-        {
-            ObstacleList.Add((ObjObstacle)obj);
-        }
-        public void AddCheckPointElement(ElementObject obj)
-        {
-            CheckPointList.Add((ObjCheckPoint)obj);
         }
 
         private LineRenderer locusLR;

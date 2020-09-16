@@ -17,27 +17,20 @@
 #endregion
 
 
-
-using Assets.Scripts.SimuUI;
 using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class ObjObstacle : ElementObject
+    public class ObstacleController : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes();
-            ea.IsShowCarAI = false;
-            ea.IsShowName = true;
-            ea.IsShowHuman = false;
-            ea.IsShowPos = true;
-            ea.IsShowRot = true;
-            ea.IsShowSca = true;
-            ea.IsShowDelete = CanDelete;
-            ea.Name = transform.name;
-            ea.TransformData = new TransformData(transform);
+            ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
+            {
+                Name = transform.name,
+                TransformData = new TransformData(transform)
+            };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
@@ -52,7 +45,6 @@ namespace Assets.Scripts.simai
         {
             nameLogic = "ObstacleLogic";
             base.Start();
-            v3Scale = new Vector3(1, 1, 1);
             CanScale = true;
             CanDrag = true;
             CanDelete = true;

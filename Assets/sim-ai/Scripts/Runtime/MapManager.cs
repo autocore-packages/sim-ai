@@ -17,7 +17,6 @@
 #endregion
 
 
-using Assets.Scripts.SimuUI;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
@@ -70,42 +69,35 @@ namespace Assets.Scripts.simai
             {
                 foreach (ElementAttbutes attrubute in testMode.CheckPointAtts)
                 {
-                    ElementsManager.Instance.AddCheckPoint(attrubute.TransformData.V3Pos,attrubute.TransformData.V3Rot,attrubute.TransformData.V3Sca, attrubute.Name);
-
+                    ElementsManager.Instance.checkPointManager.AddCheckPoint(attrubute);
                 }
             }
             if (testMode.ObstacleAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.ObstacleAtts)
                 {
-                    ElementsManager.Instance.AddObstacle(attrubute.TransformData.V3Pos, attrubute.TransformData.V3Rot, attrubute.TransformData.V3Sca, attrubute.Name);
+                    ElementsManager.Instance.obstacleManager.AddObstacle(attrubute);
                 }
             }
             if (testMode.CarAIAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.CarAIAtts)
                 {
-                    ElementsManager.Instance.AddCarAI(attrubute.PosInit.GetVector3(), attrubute.Name).CarInit();
+                    ElementsManager.Instance.nPCManager.AddNPC(attrubute);
                 }
             }
             if (testMode.HumanAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.HumanAtts)
                 {
-                    ElementsManager.Instance.AddHuman(attrubute.PosArray[0],attrubute.Name).SetObjAttbutes(attrubute);
+                    ElementsManager.Instance.pedestrianManager.AddPedestrian(attrubute);
                 }
             }
             if (testMode.TrafficLightAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.TrafficLightAtts)
                 {
-                    foreach (ObjTrafficLight item in ElementsManager.Instance.TrafficLightList)
-                    {
-                        if (item.name == attrubute.Name)
-                        {
-                            item.SetObjAttbutes(attrubute);
-                        }
-                    }
+                    ElementsManager.Instance.trafficlightManager.SetTrafficlight(attrubute, attrubute.Name);
                 }
             }
             //if (TestConfig.TestMode.VoyageTestConfig != null)
@@ -115,26 +107,9 @@ namespace Assets.Scripts.simai
         }
         public void ResetMapElements()
         {
-            if (testMode.TestCarStart != null) ElementsManager.Instance.testCar.ElementReset();
-            foreach (ElementObject obj in ElementsManager.Instance.CarList)
+            foreach (ElementObject elementObject in ElementsManager.Instance.ElementList)
             {
-                var objCarAI = obj.GetComponent<ObjAICar>();
-                if (objCarAI != null) objCarAI.ElementReset();
-            }
-            foreach (ElementObject obj in ElementsManager.Instance.HumanList)
-            {
-                var objHuman = obj.GetComponent<ObjHuman>();
-                if (objHuman != null) objHuman.ElementReset();
-            }
-            foreach (ElementObject obj in ElementsManager.Instance.ObstacleList)
-            {
-                var objObstacle = obj.GetComponent<ObjObstacle>();
-                if (objObstacle != null) objObstacle.ElementReset();
-            }
-            foreach (ElementObject obj in ElementsManager.Instance.CheckPointList)
-            {
-                var objCheckPoint = obj.GetComponent<ObjCheckPoint>();
-                if (objCheckPoint != null) objCheckPoint.ElementReset();
+                elementObject.ElementReset();
             }
         }
 

@@ -10,9 +10,10 @@ namespace Assets.Scripts.simai
         public GameObject[] NPCPrefabs;
 
 
-        public void AddNPC(int npcYype=0)
+        public void AddNPC(ElementAttbutes attbutes, int npcYype=0)
         {
             GameObject npc = Instantiate(NPCPrefabs[npcYype],transform);
+            
             NPCList.Add(npc.GetComponent<NPCController>());
         }
     }

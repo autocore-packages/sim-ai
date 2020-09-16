@@ -1,33 +1,26 @@
 ﻿using UnityEngine;
 
-using Assets.Scripts.SimuUI;
-using UnityEditor;
 
 namespace Assets.Scripts.simai
 {
-    public class ObjTrafficLight : ElementObject
+    public class TrafficLightController : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes();
-            ea.IsShowCarAI = false;
-            ea.IsShowName = true;
-            ea.IsShowHuman = false;
-            ea.IsShowPos = false;
-            ea.IsShowRot = false;
-            ea.IsShowSca = false;
-            ea.IsShowTraffic = true;
-            ea.IsShowDelete = CanDelete;
-            ea.Name = transform.name;
-            ea.WaitTime = waitTime;
-            ea.SwitchTime = switchTime;
-            ea.lightMode = (int)trafficMode;
+            ElementAttbutes ea = new ElementAttbutes(true, false, false, false, false, false, true, CanDelete)
+            {
+                Name = transform.name,
+                lightMode= (int)trafficMode
+            };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
+            waitTime = attbutes.WaitTime;
+            switchTime = attbutes.SwitchTime;
+            trafficMode = (TrafficMode)attbutes.lightMode;
         }
         public enum TrafficMode
         {
@@ -48,8 +41,6 @@ namespace Assets.Scripts.simai
         {
             nameLogic = "TrafficLightLogic";
             base.Start();
-            if(!ElementsManager.Instance.TrafficLightList.Contains(this))
-            ElementsManager.Instance.TrafficLightList.Add(this);
             CanScale = false;
             CanDrag = false;
             CanDelete = false;
@@ -57,6 +48,7 @@ namespace Assets.Scripts.simai
             trafficLightGroupA = transform.GetChild(0).GetComponentsInChildren<ITrafficLight>();
             trafficLightGroupB = transform.GetChild(1).GetComponentsInChildren<ITrafficLight>();
             SetLights();
+            UpdateElementAttributes();
         }
 
         protected override void Update()
@@ -132,6 +124,12 @@ namespace Assets.Scripts.simai
                     break;
             }
             ltl.SetLogicTrafficLight((int)trafficMode);
+        }
+
+        public override void ElementReset()
+        {
+            base.ElementReset();
+            SetObjAttbutes(objAttbutes);
         }
     }
 }

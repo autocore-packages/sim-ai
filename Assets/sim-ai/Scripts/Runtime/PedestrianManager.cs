@@ -10,7 +10,7 @@ namespace Assets.Scripts.simai
         public GameObject[] NPCPrefabs;
 
 
-        public void AddPedestrian(int PedYype =0)
+        public void AddPedestrian(ElementAttbutes attbutes, int PedYype =0)
         {
             GameObject Ped = Instantiate(NPCPrefabs[PedYype ],transform);
             PedestrainList.Add(Ped.GetComponent<PedestrianController>());

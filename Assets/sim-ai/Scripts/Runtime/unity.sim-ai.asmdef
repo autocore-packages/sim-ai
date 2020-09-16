@@ -1,8 +1,6 @@
 {
     "name": "unity.sim-ai",
-    "references": [
-        "unity.sim-ui"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

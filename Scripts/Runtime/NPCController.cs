@@ -30,6 +30,7 @@ namespace Assets.Scripts.simai
             ElementAttbutes ea = new ElementAttbutes(true,false,false,false,true,false,false,CanDelete);
             ea.Name = transform.name;
             ea.Speed = speedObjTarget;
+            ea.TransformData = new TransformData(transform);
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
@@ -169,7 +170,7 @@ namespace Assets.Scripts.simai
 
             if (RayCheckCar(PosCarOrigin, DirCarGo, out ElementObject element))
             {
-                var CarAI = element.GetComponent<ObjAICar>();
+                var CarAI = element.GetComponent<NPCController>();
                 if (CarAI != null)
                 {
                     isObstacleFront = true;

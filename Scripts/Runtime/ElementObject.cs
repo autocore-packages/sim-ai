@@ -54,11 +54,15 @@ namespace Assets.Scripts.simai
             SetElementName();
             SetLogicObj();
         }
-        public virtual void UpdateElementAttribute()
+        public void UpdateElementAttributes()
         {
-
+            objAttbutes = GetObjAttbutes();
         }
         private void OnDestroy()
+        {
+            DestroyElement();
+        }
+        public virtual void DestroyElement()
         {
             if (ElementsManager.Instance == null) return;
             if (ElementsManager.Instance.ElementList.Contains(this))
@@ -73,7 +77,6 @@ namespace Assets.Scripts.simai
         }
         protected virtual void Update()
         {
-
         }
 
         private void SetLogicObj()
@@ -105,34 +108,34 @@ namespace Assets.Scripts.simai
                 return;
             }
 
-            if (this is ObjTestCar)
+            if (this is EgoController)
             {
                 gameObject.name = "EgoVehicle";
             }
-            else if (this is ObjObstacle)
+            else if (this is ObstacleController)
             {
-                gameObject.name = "Static Obstacle" + ElementsManager.Instance.ObstacleList.Count;
+                gameObject.name = "Static Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
             }
-            else if (this is ObjHuman)
+            else if (this is PedestrianController)
             {
-                gameObject.name = "Human" + ElementsManager.Instance.HumanList.Count;
+                gameObject.name = "PedestrianController" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
             }
-            else if (this is ObjTrafficLight)
+            else if (this is TrafficLightController)
             {
-                gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.Count;
+                gameObject.name = "Traffic Light" + ElementsManager.Instance.trafficlightManager.TrafficLightList.Count;
             }
-            else if (this is ObjAICar)
+            else if (this is NPCController)
             {
-                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.CarList.Count;
+                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.nPCManager.NPCList.Count;
             }
-            else if (this is ObjCheckPoint)
+            else if (this is CheckPointController)
             {
-                gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.Count;
+                gameObject.name = "CheckPoint" + ElementsManager.Instance.checkPointManager.CheckPointList.Count;
             }
         }
         public virtual void ElementReset()
         {
-            if (objAttbutes != null) SetObjAttbutes(objAttbutes);
+            if (objAttbutes != null) UpdateElementAttributes();
             else Debug.Log("No att");
         }
     }

@@ -14,7 +14,8 @@ namespace Assets.Scripts.simai
                 Name = transform.name,
                 Speed = speedObjTarget,
                 IsWait = stopTime != 0.1f,
-                PosArray = GetPosList()
+                PosArray = GetPosList(),
+                TransformData = new TransformData(transform)
             };
             return ea;
         }

@@ -16,26 +16,23 @@
 */
 #endregion
 
-using Assets.Scripts.SimuUI;
-using System;
+
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class ObjCheckPoint : ElementObject
+
+    public class EgoController : ElementObject
     {
+        public ITrafficLight CurrentTL { get; set; }
+
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes();
-            ea.IsShowCarAI = false;
-            ea.IsShowName = true;
-            ea.IsShowHuman = false;
-            ea.IsShowPos = true;
-            ea.IsShowRot = true;
-            ea.IsShowSca = true;
-            ea.IsShowDelete = CanDelete;
-            ea.Name = transform.name;
-            ea.TransformData = new TransformData(transform);
+            ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
+            {
+                Name = transform.name,
+                TransformData = new TransformData(transform)
+            };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
@@ -43,26 +40,23 @@ namespace Assets.Scripts.simai
             if (ElementsManager.Instance.SelectedElement != this) return;
             base.SetObjAttbutes(attbutes);
             transform.position = attbutes.TransformData.V3Pos.GetVector3();
-            transform.rotation = Quaternion.Euler( attbutes.TransformData.V3Pos.GetVector3());
-            transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
+            transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
         }
         protected override void Start()
         {
-            nameLogic = "CheckPointLogic";
+            nameLogic = "BlueCarLogic";
             base.Start();
-            v3Scale = new Vector3(3, 1, 5);
-            CanScale = true;
-            CanDrag = true;
-            CanDelete = true;
+            CanScale = false;
+            CanDrag = false;
+            CanDelete = false;
         }
         protected override void Update()
         {
-            offsetPos = new Vector3(0, -0.5f*v3Scale.y, 0);
             base.Update();
         }
         public override void ElementReset()
         {
-            base.ElementReset(); 
+            base.ElementReset();
         }
     }
 }

@@ -100,17 +100,6 @@ namespace Assets.Scripts.simai
                     ElementsManager.Instance.trafficlightManager.SetTrafficlight(attrubute, attrubute.Name);
                 }
             }
-            //if (TestConfig.TestMode.VoyageTestConfig != null)
-            //{
-            //    VoyageTestManager.Instance.SetVoyageTestConfig(TestConfig.TestMode.VoyageTestConfig);
-            //}
-        }
-        public void ResetMapElements()
-        {
-            foreach (ElementObject elementObject in ElementsManager.Instance.ElementList)
-            {
-                elementObject.ElementReset();
-            }
         }
 
         public LaneData SearchNearestPos2Lane(out int index, Vector3 positon)
@@ -120,7 +109,7 @@ namespace Assets.Scripts.simai
             LaneData laneDataTemp = MapData.LanesData[0];
             int indexTemp = 0;
             foreach (LaneData lane in MapData.LanesData)
-            {
+            { 
                 foreach (Vec3 pos in lane.List_pos)
                 {
                     float dis = Vector3.Distance(pos.GetVector3(), positon);

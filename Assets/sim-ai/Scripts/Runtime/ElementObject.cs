@@ -108,7 +108,7 @@ namespace Assets.Scripts.simai
                 return;
             }
 
-            if (this is EgoController)
+            if (this is EgoVehicleController)
             {
                 gameObject.name = "EgoVehicle";
             }

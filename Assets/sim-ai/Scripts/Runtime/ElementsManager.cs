@@ -102,7 +102,7 @@ namespace Assets.Scripts.simai
         }
         public void FollowMouse(ElementObject elementObject)
         {
-            elementObject.transform.position =MouseWorldPos + elementObject.offsetPos;
+            elementObject.transform.position =MouseWorldPos + elementObject.OffsetPos;
         }
 
         private void Awake()

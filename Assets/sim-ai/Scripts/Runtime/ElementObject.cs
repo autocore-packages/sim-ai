@@ -36,7 +36,13 @@ namespace Assets.Scripts.simai
         private Vector3 PosDragStart;
         private Vector3 MousePosDragStart;
         public Vector3 v3Scale;
-        public Vector3 offsetPos;
+        public virtual Vector3 OffsetPos
+        {
+            get
+            {
+                return Vector3.zero;
+            }
+        }
         public float speedObjTarget;
         public virtual ElementAttbutes GetObjAttbutes()
         {

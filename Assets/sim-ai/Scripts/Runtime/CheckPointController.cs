@@ -50,9 +50,9 @@ namespace Assets.Scripts.simai
         }
         protected override void Update()
         {
-            offsetPos = new Vector3(0, -0.5f*v3Scale.y, 0);
             base.Update();
         }
+        public override Vector3 OffsetPos => new Vector3(0, -0.5f * v3Scale.y, 0);
         public override void ElementReset()
         {
             base.ElementReset(); 

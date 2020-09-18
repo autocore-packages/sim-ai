@@ -3,5 +3,8 @@
     "displayName": "sim-ai",
     "description": "AI of Simulator",
     "version": "1.0.3",
-    "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+
+  }
 }

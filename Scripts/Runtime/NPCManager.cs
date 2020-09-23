@@ -7,14 +7,17 @@ namespace Assets.Scripts.simai
     public class NPCManager : MonoBehaviour
     {
         public List<NPCController> NPCList = new List<NPCController>();
-        public GameObject[] NPCPrefabs;
-
-
-        public void AddNPC(ElementAttbutes attbutes, int npcYype=0)
+        public Model[] Models;
+        public void AddNPC(ElementAttbutes attbutes)
         {
-            GameObject npc = Instantiate(NPCPrefabs[npcYype],transform);
-            
-            NPCList.Add(npc.GetComponent<NPCController>());
+            AddNPC(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public NPCController AddNPC(int model = 0)
+        {
+            NPCController npcController = Instantiate(Models[model].Prefab, transform).GetComponent<NPCController>();
+            npcController.model = model;
+            NPCList.Add(npcController);
+            return npcController;
         }
     }
 

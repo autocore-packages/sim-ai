@@ -7,13 +7,17 @@ namespace Assets.Scripts.simai
     public class PedestrianManager: MonoBehaviour
     {
         public List<PedestrianController> PedestrainList = new List<PedestrianController>();
-        public GameObject[] NPCPrefabs;
-
-
-        public void AddPedestrian(ElementAttbutes attbutes, int PedYype =0)
+        public Model[] Models;
+        public void AddPedestrian(ElementAttbutes attbutes)
         {
-            GameObject Ped = Instantiate(NPCPrefabs[PedYype ],transform);
-            PedestrainList.Add(Ped.GetComponent<PedestrianController>());
+            AddPedestrian(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public PedestrianController AddPedestrian(int model = 0)
+        {
+            PedestrianController pedestrianController = Instantiate(Models[model].Prefab, transform).GetComponent<PedestrianController>();
+            pedestrianController.model = model;
+            PedestrainList.Add(pedestrianController);
+            return pedestrianController;
         }
     }
 

@@ -26,25 +26,32 @@ namespace Assets.Scripts.simai
     {
         public ITrafficLight CurrentTL { get; set; }
 
+        public override string NameLogic 
+        {
+            get
+            {
+                return "BlueCarLogic";
+            }
+        }
+
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
             {
                 Name = transform.name,
-                TransformData = new TransformData(transform)
+                TransformData = new TransformData(transform),
+                Model = model
             };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            if (ElementsManager.Instance.SelectedElement != this) return;
-            base.SetObjAttbutes(attbutes);
+            model = attbutes.Model;
             transform.position = attbutes.TransformData.V3Pos.GetVector3();
             transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
         }
         protected override void Start()
         {
-            nameLogic = "BlueCarLogic";
             base.Start();
             CanScale = false;
             CanDrag = false;

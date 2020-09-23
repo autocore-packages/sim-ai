@@ -21,7 +21,7 @@ namespace Assets.Scripts.simai
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            base.SetObjAttbutes(attbutes);
+            model = attbutes.Model;
             speedObjTarget = attbutes.Speed;
             isHumanRepeat = attbutes.IsRepeat;
             SetPosList(attbutes.PosArray);
@@ -60,10 +60,20 @@ namespace Assets.Scripts.simai
                 }
             }
         }
+
+        public override string NameLogic
+        {
+            get
+            {
+                var logic = ElementsManager.Instance.pedestrianManager.Models[model].Logic;
+                if (logic != null) return logic;
+                else return "HumanLogic";
+            }
+        }
+
         protected override void Start()
         {
             base.Start();
-            nameLogic = "HumanLogic";
             CanScale = false;
             CanDrag = false;
             CanDelete = true;

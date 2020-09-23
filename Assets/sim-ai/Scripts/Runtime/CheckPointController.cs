@@ -28,21 +28,20 @@ namespace Assets.Scripts.simai
             ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
             {
                 Name = transform.name,
-                TransformData = new TransformData(transform)
+                TransformData = new TransformData(transform),
+                Model = model
             };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            if (ElementsManager.Instance.SelectedElement != this) return;
-            base.SetObjAttbutes(attbutes);
+            model = attbutes.Model;
             transform.position = attbutes.TransformData.V3Pos.GetVector3();
             transform.rotation = Quaternion.Euler( attbutes.TransformData.V3Pos.GetVector3());
             transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
         }
         protected override void Start()
         {
-            nameLogic = "CheckPointLogic";
             base.Start();
             CanScale = true;
             CanDrag = true;
@@ -53,6 +52,18 @@ namespace Assets.Scripts.simai
             base.Update();
         }
         public override Vector3 OffsetPos => new Vector3(0, -0.5f * v3Scale.y, 0);
+
+        public override string NameLogic
+        {
+            get
+            {
+                var logic = ElementsManager.Instance.checkPointManager.Models[model].Logic;
+                if (logic != null) return logic;
+                else return "CheckPointLogic";
+            }
+        }
+        
+
         public override void ElementReset()
         {
             base.ElementReset(); 

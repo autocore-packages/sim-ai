@@ -7,14 +7,17 @@ namespace Assets.Scripts.simai
     public class CheckPointManager : MonoBehaviour
     {
         public List<CheckPointController> CheckPointList = new List<CheckPointController>();
-        public GameObject CheckPointPrefabs;
-
-
-        public void AddCheckPoint(ElementAttbutes attbutes ,int obstacleYype = 0)
+        public Model[] Models;
+        public void AddCheckPoint(ElementAttbutes attbutes)
         {
-            GameObject npc = Instantiate(CheckPointPrefabs ,transform);
-            npc.GetComponent<ElementObject>().objAttbutes = attbutes;
-            CheckPointList.Add(npc.GetComponent<CheckPointController>());
+            AddCheckPoint(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public CheckPointController AddCheckPoint(int model)
+        {
+            CheckPointController checkPointController= Instantiate(Models[model].Prefab, transform).GetComponent<CheckPointController>();
+            checkPointController.model = model;
+            CheckPointList.Add(checkPointController);
+            return checkPointController;
         }
     }
 

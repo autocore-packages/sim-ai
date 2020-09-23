@@ -10,17 +10,16 @@ namespace Assets.Scripts.simai
             ElementAttbutes ea = new ElementAttbutes(true, false, false, false, false, false, true, CanDelete)
             {
                 Name = transform.name,
-                lightMode= (int)trafficMode
+                LightMode= (int)trafficMode
             };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            if (ElementsManager.Instance.SelectedElement != this) return;
-            base.SetObjAttbutes(attbutes);
+            model = attbutes.Model;
             waitTime = attbutes.WaitTime;
             switchTime = attbutes.SwitchTime;
-            trafficMode = (TrafficMode)attbutes.lightMode;
+            trafficMode = (TrafficMode)attbutes.LightMode;
         }
         public enum TrafficMode
         {
@@ -37,9 +36,11 @@ namespace Assets.Scripts.simai
         public float tempTime = 0;
         private bool isApass;
         private LogicTrafficLight ltl;
+
+        public override string NameLogic => "TrafficLightLogic";
+
         protected override void Start()
         {
-            nameLogic = "TrafficLightLogic";
             base.Start();
             CanScale = false;
             CanDrag = false;

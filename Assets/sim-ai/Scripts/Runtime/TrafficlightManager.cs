@@ -20,6 +20,7 @@ namespace Assets.Scripts.simai
                 if (trafficLight.name == name)
                 {
                     trafficLight.objAttbutes = attbutes;
+
                 }
             }
         }

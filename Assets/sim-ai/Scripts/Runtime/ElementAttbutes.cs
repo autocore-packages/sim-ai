@@ -46,10 +46,11 @@ namespace Assets.Scripts.simai
         public TransformData TransformData { get; set; }
         public Vec3 PosEnd { get; set; }
         public Vec3 PosStart { get; set; }
-        public int lightMode { get; set; }
+        public int LightMode { get; set; }
         public float Speed { get; set; }
         public string Name { get; set; }
         public Vec3 PosInit { get; set; }
+        public int Model { get; set; }
         public bool CanDelete { get; set; }
     }
 }

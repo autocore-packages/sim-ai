@@ -4,11 +4,10 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class NPCController : ElementObject
+    public abstract class NPCController : ElementObject
     {
         protected override void Start()
         {
-            nameLogic = "GreenCarLogic";
             base.Start();
             CanScale = false;
             CanDrag = false;
@@ -18,6 +17,15 @@ namespace Assets.Scripts.simai
         public Vector3 posStart;// first aim position
         public Vector3 posAim; //target position
         public Vector3 posAimTemp; //temp target postion
+        public override string NameLogic
+        {
+            get
+            {
+                var logic = ElementsManager.Instance.nPCManager.Models[model].Logic;
+                if (logic!= null) return "logic";
+                else return "GreenCarLogic";
+            }
+        }
 
         private readonly float maxSpeed = 40;//最大速度
         public float speedCurrent;//车辆实际速度
@@ -27,15 +35,18 @@ namespace Assets.Scripts.simai
 
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes(true,false,false,false,true,false,false,CanDelete);
-            ea.Name = transform.name;
-            ea.Speed = speedObjTarget;
-            ea.TransformData = new TransformData(transform);
+            ElementAttbutes ea = new ElementAttbutes(true, false, false, false, true, false, false, CanDelete)
+            {
+                Model = model,
+                Name = transform.name,
+                Speed = speedObjTarget,
+                TransformData = new TransformData(transform)
+            };
             return ea;
         }
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
-            base.SetObjAttbutes(attbutes);
+            model = attbutes.Model;
             speedObjTarget = attbutes.Speed;
             if (attbutes.PosInit != null) posInit = attbutes.PosInit.GetVector3();
             if (attbutes.PosStart != null) posStart = attbutes.PosStart.GetVector3();

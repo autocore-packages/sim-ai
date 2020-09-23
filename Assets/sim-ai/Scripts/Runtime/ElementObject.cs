@@ -16,18 +16,24 @@
 */
 #endregion
 using Assets.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.Scripts.simai
 {
-    public class ElementObject : MonoBehaviour
+    [SerializeField]
+    public class Model
+    {
+        public GameObject Prefab;
+        public string Logic;
+    }
+    public abstract class ElementObject : MonoBehaviour
     {
         public ElementAttbutes objAttbutes;
         public GameObject elementButton;
         public LogicObj logicObject;
-        public string nameLogic;
         public bool CanDelete = true;
         public bool CanDrag = false;
         public bool IsDraging = false;
@@ -36,6 +42,12 @@ namespace Assets.Scripts.simai
         private Vector3 PosDragStart;
         private Vector3 MousePosDragStart;
         public Vector3 v3Scale;
+        public int model= 0;
+
+        public abstract string NameLogic
+        {
+            get;
+        }
         public virtual Vector3 OffsetPos
         {
             get
@@ -44,13 +56,8 @@ namespace Assets.Scripts.simai
             }
         }
         public float speedObjTarget;
-        public virtual ElementAttbutes GetObjAttbutes()
-        {
-            return new ElementAttbutes();
-        }
-        public virtual void SetObjAttbutes(ElementAttbutes attbutes)
-        {
-        }
+        public abstract ElementAttbutes GetObjAttbutes();
+        public abstract void SetObjAttbutes(ElementAttbutes attbutes);
         public virtual void ElementInit()
         {
             if (!ElementsManager.Instance.ElementList.Contains(this))
@@ -88,7 +95,7 @@ namespace Assets.Scripts.simai
         private void SetLogicObj()
         {
             if (logicObject != null) return;
-            GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + nameLogic);
+            GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + NameLogic);
             if (logictemp != null)
             {
                 logicObject = Instantiate(logictemp, transform).GetComponent<LogicObj>();

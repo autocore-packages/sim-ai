@@ -169,24 +169,17 @@ namespace Assets.Scripts.simai
         }
 
         private LineRenderer locusLR;
-        private LineRenderer LocusLR
-        {
-            get
-            {
-                if (locusLR == null) locusLR = GetComponent<LineRenderer>();
-                return locusLR;
-            }
-        }
         private void SetLineRenderer(Vector3[] postions)
         {
+            if (locusLR == null) locusLR = GetComponent<LineRenderer>();
             Vector3[] Poses = new Vector3[postions.Length];
             for (int i = 0; i < postions.Length; i++)
             {
                 Poses[i] = postions[i] + Vector3.up * 3;
             }
-            if (!LocusLR.enabled) LocusLR.enabled = true;
-            LocusLR.positionCount = Poses.Length;
-            LocusLR.SetPositions(Poses);
+            if (!locusLR.enabled) locusLR.enabled = true;
+            locusLR.positionCount = Poses.Length;
+            locusLR.SetPositions(Poses);
         }
         public void ResetAllElements()
         {

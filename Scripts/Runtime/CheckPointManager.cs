@@ -7,6 +7,7 @@ namespace Assets.Scripts.simai
     public class CheckPointManager : MonoBehaviour
     {
         public List<CheckPointController> CheckPointList = new List<CheckPointController>();
+        [SerializeField]
         public Model[] Models;
         public void AddCheckPoint(ElementAttbutes attbutes)
         {

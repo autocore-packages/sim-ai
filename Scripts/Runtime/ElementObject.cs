@@ -23,7 +23,7 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts.simai
 {
-    [SerializeField]
+    [Serializable]
     public class Model
     {
         public GameObject Prefab;

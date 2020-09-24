@@ -43,9 +43,6 @@ namespace Assets.Scripts.simai
         protected override void Start()
         {
             base.Start();
-            CanScale = true;
-            CanDrag = true;
-            CanDelete = true;
         }
         protected override void Update()
         {
@@ -62,7 +59,12 @@ namespace Assets.Scripts.simai
                 else return "CheckPointLogic";
             }
         }
-        
+
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => true;
+
+        public override bool CanScale => true;
 
         public override void ElementReset()
         {

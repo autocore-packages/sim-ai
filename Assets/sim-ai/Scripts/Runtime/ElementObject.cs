@@ -34,16 +34,13 @@ namespace Assets.Scripts.simai
         public ElementAttbutes objAttbutes;
         public GameObject elementButton;
         public LogicObj logicObject;
-        public bool CanDelete = true;
-        public bool CanDrag = false;
-        public bool IsDraging = false;
-        public bool CanScale = false;
         public Vector3 offsetLogic = Vector3.zero;
-        private Vector3 PosDragStart;
-        private Vector3 MousePosDragStart;
         public Vector3 v3Scale;
         public int model= 0;
 
+        public abstract bool CanDelete { get; }
+        public abstract bool CanDrag { get; }
+        public abstract bool CanScale { get; }
         public abstract string NameLogic
         {
             get;

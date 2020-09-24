@@ -22,9 +22,15 @@ using UnityEngine;
 namespace Assets.Scripts.simai
 {
 
-    public class EgoVehicleController : ElementObject
+    public abstract class EgoVehicleController : ElementObject
     {
         public ITrafficLight CurrentTL { get; set; }
+
+        public override bool CanDelete => false;
+
+        public override bool CanDrag => false;
+
+        public override bool CanScale => false;
 
         public override string NameLogic 
         {
@@ -53,9 +59,6 @@ namespace Assets.Scripts.simai
         protected override void Start()
         {
             base.Start();
-            CanScale = false;
-            CanDrag = false;
-            CanDelete = false;
         }
         protected override void Update()
         {

@@ -23,6 +23,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
+    [ExecuteInEditMode]
     public class ElementsManager : MonoBehaviour
     {
         private static ElementsManager _instance = null;
@@ -42,22 +43,28 @@ namespace Assets.Scripts.simai
 
         public bool IsInEdit { get; set; } = false;
 
+        [HideInInspector]
         public EgoVehicleController testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
 
-        public GameObject NPCManager;
+        public GameObject GONPCManager;
+        [HideInInspector]
         public NPCManager nPCManager;
 
-        public GameObject PedestrianManager;
+        public GameObject GOPedestrianManager;
+        [HideInInspector]
         public PedestrianManager pedestrianManager;
 
-        public GameObject ObstacleManager;
+        public GameObject GOObstacleManager;
+        [HideInInspector]
         public ObstacleManager obstacleManager;
 
-        public GameObject TrafficlghtManager;
+        public GameObject GOTrafficlghtManager;
+        [HideInInspector]
         public TrafficlightManager trafficlightManager;
 
-        public GameObject CheckPointManager;
+        public GameObject GOCheckPointManager;
+        [HideInInspector]
         public CheckPointManager checkPointManager;
 
 
@@ -108,11 +115,11 @@ namespace Assets.Scripts.simai
         private void Awake()
         {
             _instance = this;
-            if(nPCManager==null) nPCManager = Instantiate(NPCManager,transform).GetComponent<NPCManager>();
-            if(pedestrianManager==null) pedestrianManager = Instantiate(PedestrianManager, transform).GetComponent<PedestrianManager>();
-            if (obstacleManager == null) obstacleManager = Instantiate(ObstacleManager, transform).GetComponent<ObstacleManager>();
+            if(nPCManager==null) nPCManager = Instantiate(GONPCManager,transform).GetComponent<NPCManager>();
+            if(pedestrianManager==null) pedestrianManager = Instantiate(GOPedestrianManager, transform).GetComponent<PedestrianManager>();
+            if (obstacleManager == null) obstacleManager = Instantiate(GOObstacleManager, transform).GetComponent<ObstacleManager>();
             if (checkPointManager == null) checkPointManager = Instantiate(checkPointManager, transform).GetComponent<CheckPointManager>();
-            if (trafficlightManager == null) trafficlightManager = Instantiate(TrafficlghtManager, transform).GetComponent<TrafficlightManager>();
+            if (trafficlightManager == null) trafficlightManager = Instantiate(GOTrafficlghtManager, transform).GetComponent<TrafficlightManager>();
 
         }
 

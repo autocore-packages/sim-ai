@@ -9,14 +9,17 @@ namespace Assets.Scripts.simai
         protected override void Start()
         {
             base.Start();
-            CanScale = false;
-            CanDrag = false;
-            CanDelete = true;
         }
         public Vector3 posInit;//Init position
         public Vector3 posStart;// first aim position
         public Vector3 posAim; //target position
         public Vector3 posAimTemp; //temp target postion
+
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => false;
+
+        public override bool CanScale => false;
         public override string NameLogic
         {
             get
@@ -28,10 +31,9 @@ namespace Assets.Scripts.simai
         }
 
         private readonly float maxSpeed = 40;//最大速度
-        public float speedCurrent;//车辆实际速度
-        private float acceleration_Drive = 3;
+        public abstract float SpeedCurrent { get; set; }//车辆实际速度
+        public abstract float BrakeDistance { get; set; }
         private float acceleration_Break = 5;
-        private float speedAim;//逻辑目标速度
 
         public override ElementAttbutes GetObjAttbutes()
         {
@@ -111,8 +113,7 @@ namespace Assets.Scripts.simai
         private float checkDistance = 2;
         void DistanceCheck()
         {
-            distanceBrake = speedCurrent * (speedCurrent / acceleration_Break) / 2;
-            if (distanceBrake < npc_extent + 1) distanceBrake = npc_extent + 1;
+            if (BrakeDistance < npc_extent + 1) BrakeDistance = npc_extent + 1;
             distance2Target = offset_V3.magnitude;
             if (distance2Target > checkDistance && angle_Front2Aim > 150)
             {
@@ -121,12 +122,10 @@ namespace Assets.Scripts.simai
             else if (distance2Target < checkDistance)
             {
                 indexLane++;
-                //if (isChangeLane) isChangeLane = false;
             }
             if (isHaveTarget && Mathf.Abs(indexLane - indexTarget) < 3 && laneCurrent.List_sameLanesID.Contains(laneTarget.LaneID))
             {
                 isHaveTarget = false;
-                //PanelOther.Instance.SetTipText("AI vehicle arrive at target position");
             }
             if (indexLane >= laneCurrent.List_pos.Count)
             {
@@ -334,6 +333,7 @@ namespace Assets.Scripts.simai
 
         #region Speed Caculator
 
+        public float speedAim;
         private void SpeedCaculator()
         {
             if (speedObjTarget > maxSpeed) speedObjTarget = maxSpeed;

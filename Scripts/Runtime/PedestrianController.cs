@@ -27,6 +27,15 @@ namespace Assets.Scripts.simai
             SetPosList(attbutes.PosArray);
             stopTime = attbutes.IsWait ? 1 : 0.1f;
         }
+        protected override void Start()
+        {
+            base.Start();
+        }
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => false;
+
+        public override bool CanScale => false;
         #region data
 
         public List<Vector3> PosList = new List<Vector3>();
@@ -71,13 +80,6 @@ namespace Assets.Scripts.simai
             }
         }
 
-        protected override void Start()
-        {
-            base.Start();
-            CanScale = false;
-            CanDrag = false;
-            CanDelete = true;
-        }
         protected override void Update()
         {
             base.Update();

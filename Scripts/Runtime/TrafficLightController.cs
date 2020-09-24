@@ -21,6 +21,11 @@ namespace Assets.Scripts.simai
             switchTime = attbutes.SwitchTime;
             trafficMode = (TrafficMode)attbutes.LightMode;
         }
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => false;
+
+        public override bool CanScale => false;
         public enum TrafficMode
         {
             Wait = 0,
@@ -42,9 +47,6 @@ namespace Assets.Scripts.simai
         protected override void Start()
         {
             base.Start();
-            CanScale = false;
-            CanDrag = false;
-            CanDelete = false;
             ltl = logicObject.GetComponent<LogicTrafficLight>();
             trafficLightGroupA = transform.GetChild(0).GetComponentsInChildren<ITrafficLight>();
             trafficLightGroupB = transform.GetChild(1).GetComponentsInChildren<ITrafficLight>();

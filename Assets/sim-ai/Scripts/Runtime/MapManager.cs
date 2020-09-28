@@ -29,7 +29,7 @@ namespace Assets.Scripts.simai
             get
             {
                 if (_instance == null)
-                    Debug.LogError("No MapManager");
+                    _instance = FindObjectOfType<MapManager>();
                 return _instance;
             }
         }

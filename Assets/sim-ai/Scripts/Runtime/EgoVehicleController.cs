@@ -22,7 +22,7 @@ using UnityEngine;
 namespace Assets.Scripts.simai
 {
 
-    public abstract class EgoVehicleController : ElementObject
+    public class EgoVehicleController : ElementObject
     {
         public ITrafficLight CurrentTL { get; set; }
 

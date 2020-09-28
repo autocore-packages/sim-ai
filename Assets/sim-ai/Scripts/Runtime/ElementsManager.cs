@@ -48,23 +48,18 @@ namespace Assets.Scripts.simai
         public List<ElementObject> ElementList = new List<ElementObject>();
 
         public GameObject GONPCManager;
-        [HideInInspector]
         public NPCManager nPCManager;
 
         public GameObject GOPedestrianManager;
-        [HideInInspector]
         public PedestrianManager pedestrianManager;
 
         public GameObject GOObstacleManager;
-        [HideInInspector]
         public ObstacleManager obstacleManager;
 
         public GameObject GOTrafficlghtManager;
-        [HideInInspector]
         public TrafficlightManager trafficlightManager;
 
         public GameObject GOCheckPointManager;
-        [HideInInspector]
         public CheckPointManager checkPointManager;
 
 
@@ -115,12 +110,11 @@ namespace Assets.Scripts.simai
         private void Awake()
         {
             _instance = this;
-            if(nPCManager==null) nPCManager = Instantiate(GONPCManager,transform).GetComponent<NPCManager>();
-            if(pedestrianManager==null) pedestrianManager = Instantiate(GOPedestrianManager, transform).GetComponent<PedestrianManager>();
+            if (nPCManager == null) nPCManager = Instantiate(GONPCManager, transform).GetComponent<NPCManager>();
+            if (pedestrianManager == null) pedestrianManager = Instantiate(GOPedestrianManager, transform).GetComponent<PedestrianManager>();
             if (obstacleManager == null) obstacleManager = Instantiate(GOObstacleManager, transform).GetComponent<ObstacleManager>();
             if (checkPointManager == null) checkPointManager = Instantiate(checkPointManager, transform).GetComponent<CheckPointManager>();
             if (trafficlightManager == null) trafficlightManager = Instantiate(GOTrafficlghtManager, transform).GetComponent<TrafficlightManager>();
-
         }
 
         public bool isShowLine;
@@ -143,16 +137,17 @@ namespace Assets.Scripts.simai
         public void RemoveSelectedElement()
         {
             var obj = SelectedElement;
+            if (!obj.CanDelete) return;
             RemoveElementFromList(obj);
         }
         public void RemoveElement(GameObject obj)
         {
             var eleObj = obj.GetComponent<ElementObject>();
+            if (!eleObj.CanDelete) return;
             RemoveElementFromList(eleObj);
         }
         public void RemoveElementFromList(ElementObject elementObject)
         {
-            if (!elementObject.CanDelete) return;
             elementObject.DestroyElement();
             SelectedElement = null;
         }
@@ -168,7 +163,7 @@ namespace Assets.Scripts.simai
             SelectedElement = null;
         }
 
-        private LineRenderer locusLR;
+        public LineRenderer locusLR;
         private void SetLineRenderer(Vector3[] postions)
         {
             if (locusLR == null) locusLR = GetComponent<LineRenderer>();

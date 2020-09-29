@@ -79,6 +79,11 @@ namespace Assets.Scripts.simai
             {
                 ElementsManager.Instance.RemoveElement(gameObject);
             }
+            if (this is NPCController npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
+            else if (this is PedestrianController ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
+            else if(this is ObstacleController obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
+            else if(this is CheckPointController che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
+            else if (this is TrafficLightController tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
             if (elementButton != null) Destroy(elementButton);
         }
         protected virtual void Start()

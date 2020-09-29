@@ -134,23 +134,25 @@ namespace Assets.Scripts.simai
             else if (locusLR.enabled) locusLR.enabled = false;
         }
 
+
         public void RemoveSelectedElement()
         {
-            var obj = SelectedElement;
-            if (!obj.CanDelete) return;
-            RemoveElementFromList(obj);
+            if (!SelectedElement.CanDelete) return;
+            Destroy(SelectedElement.gameObject);
         }
-        public void RemoveElement(GameObject obj)
+        public void RemoveElement(GameObject obj) 
         {
             var eleObj = obj.GetComponent<ElementObject>();
-            if (!eleObj.CanDelete) return;
+
             RemoveElementFromList(eleObj);
         }
         public void RemoveElementFromList(ElementObject elementObject)
         {
-            elementObject.DestroyElement();
+            if (!elementObject.CanDelete) return;
+            Destroy(elementObject.gameObject);
             SelectedElement = null;
         }
+
 
         public void RemoveAllElements()
         {

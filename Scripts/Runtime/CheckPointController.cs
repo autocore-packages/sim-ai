@@ -70,10 +70,5 @@ namespace Assets.Scripts.simai
         {
             base.ElementReset(); 
         }
-        public override void DestroyElement()
-        {
-            base.DestroyElement();
-            ElementsManager.Instance.checkPointManager.CheckPointList.Remove(this);
-        }
     }
 }

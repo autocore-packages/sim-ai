@@ -25,7 +25,7 @@ namespace Assets.Scripts.simai
             get
             {
                 var logic = ElementsManager.Instance.nPCManager.Models[model].Logic;
-                if (logic!= null) return "logic";
+                if (logic!= null) return logic;
                 else return "GreenCarLogic";
             }
         }

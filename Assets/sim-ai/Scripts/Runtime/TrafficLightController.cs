@@ -10,7 +10,9 @@ namespace Assets.Scripts.simai
             ElementAttbutes ea = new ElementAttbutes(true, false, false, false, false, false, true, CanDelete)
             {
                 Name = transform.name,
-                LightMode= (int)trafficMode
+                LightMode = (int)trafficMode,
+                SwitchTime = switchTime,
+                WaitTime = waitTime
             };
             return ea;
         }

@@ -78,7 +78,8 @@ namespace Assets.Scripts.simai
         protected override void Update()
         {
             base.Update();
-            posAimTemp = laneCurrent.List_pos[indexLane].GetVector3(); 
+            posAimTemp = laneCurrent.List_pos[indexLane].GetVector3();
+            DistanceCheck();
             PositionCheck();
             ObstacleCheck();
             TrafficLightCheck(); 

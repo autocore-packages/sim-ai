@@ -70,12 +70,15 @@ namespace Assets.Scripts.simai
         public override void ElementInit()
         {
             base.ElementInit();
+        }
+        public void NPCInit()
+        {
             laneCurrent = MapManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
             posAimTemp = laneCurrent.List_pos[indexLaneFiset].GetVector3();
             transform.position = posInit;
             indexLane = indexLaneFiset;
         }
-        private void Update()
+        protected virtual void Update()
         {
             if (!isCarDrive) return;
             posAimTemp = laneCurrent.List_pos[indexLane].GetVector3();

@@ -86,9 +86,13 @@ namespace Assets.Scripts.simai
             else if (this is TrafficLightController tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
             if (elementButton != null) Destroy(elementButton);
         }
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             ElementInit();
+
+        }
+        protected virtual void Start()
+        {
         }
 
         private void SetLogicObj()

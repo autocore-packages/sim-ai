@@ -60,10 +60,6 @@ namespace Assets.Scripts.simai
         {
             base.Start();
         }
-        protected override void Update()
-        {
-            base.Update();
-        }
         public override void ElementReset()
         {
             base.ElementReset();

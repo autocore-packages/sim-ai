@@ -80,11 +80,9 @@ namespace Assets.Scripts.simai
             }
         }
 
-        protected override void Update()
+        private void Update()
         {
-            base.Update();
             remainDistance = Vector3.Distance(transform.position,  AimPos);
-
         }
 
 

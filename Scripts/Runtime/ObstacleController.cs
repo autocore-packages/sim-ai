@@ -50,10 +50,6 @@ namespace Assets.Scripts.simai
         {
             base.Start();
         }
-        protected override void Update()
-        {
-            base.Update();
-        }
         public override Vector3 OffsetPos => new Vector3(0, 0.5f * v3Scale.y, 0);
 
         public override string NameLogic

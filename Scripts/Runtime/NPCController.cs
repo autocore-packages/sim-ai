@@ -42,6 +42,9 @@ namespace Assets.Scripts.simai
                 Model = model,
                 Name = transform.name,
                 Speed = speedObjTarget,
+                PosInit =new Vec3(posInit),
+                PosStart = new Vec3(posStart),
+                PosEnd = new Vec3(posAim),
                 TransformData = new TransformData(transform)
             };
             return ea;
@@ -54,9 +57,7 @@ namespace Assets.Scripts.simai
             if (attbutes.PosStart != null) posStart = attbutes.PosStart.GetVector3();
             if (attbutes.PosEnd != null) posAim = attbutes.PosEnd.GetVector3();
         }
-
-        //车辆是否行驶
-        private bool isCarDrive = false;
+        public bool isCarDrive = false;
         //检查范围
         private float minCheckDistance = 2;
         private bool isWaitTLStop;
@@ -70,14 +71,13 @@ namespace Assets.Scripts.simai
         {
             base.ElementInit();
             laneCurrent = MapManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
-            posAimTemp = laneCurrent.List_pos[indexLaneFiset + 1].GetVector3();
+            posAimTemp = laneCurrent.List_pos[indexLaneFiset].GetVector3();
             transform.position = posInit;
             indexLane = indexLaneFiset;
-            isCarDrive = true;
         }
-        protected override void Update()
+        private void Update()
         {
-            base.Update();
+            if (!isCarDrive) return;
             posAimTemp = laneCurrent.List_pos[indexLane].GetVector3();
             DistanceCheck();
             PositionCheck();

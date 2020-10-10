@@ -56,7 +56,7 @@ namespace Assets.Scripts.simai
             UpdateElementAttributes();
         }
 
-        protected override void Update()
+        private void Update()
         {
             #region 红绿灯时间计算
             tempTime += Time.deltaTime;

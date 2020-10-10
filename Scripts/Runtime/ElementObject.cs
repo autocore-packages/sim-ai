@@ -90,9 +90,6 @@ namespace Assets.Scripts.simai
         {
             ElementInit();
         }
-        protected virtual void Update()
-        {
-        }
 
         private void SetLogicObj()
         {

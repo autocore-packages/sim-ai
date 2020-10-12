@@ -73,6 +73,7 @@ namespace Assets.Scripts.simai
         }
         public void NPCInit()
         {
+            isCarDrive = true;
             laneCurrent = MapManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
             posAimTemp = laneCurrent.List_pos[indexLaneFiset].GetVector3();
             transform.position = posInit;

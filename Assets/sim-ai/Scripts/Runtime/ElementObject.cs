@@ -89,7 +89,6 @@ namespace Assets.Scripts.simai
         protected virtual void Awake()
         {
             ElementInit();
-
         }
         protected virtual void Start()
         {

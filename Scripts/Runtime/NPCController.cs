@@ -185,15 +185,14 @@ namespace Assets.Scripts.simai
 
             if (RayCheckCar(PosCarOrigin, DirCarGo, out ElementObject element))
             {
-                var CarAI = element.GetComponent<NPCController>();
-                if (CarAI != null)
+                if(element is NPCController)
                 {
                     isObstacleFront = true;
                     return;
                 }
                 Vector3 PosLaneLeft = PosCarOrigin + Quaternion.AngleAxis(90, Vector3.up) * DirCarGo * 3;
                 Vector3 PosLaneRight = PosCarOrigin + Quaternion.AngleAxis(-90, Vector3.up) * DirCarGo * 3;
-
+                  
                 if (!RayCheckCar(PosLaneLeft, DirCarGo) && CanChangeLaneLeft())
                 {
                     ChangeLane();

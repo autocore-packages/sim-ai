@@ -33,6 +33,7 @@ namespace Assets.Scripts.simai
             {
                 if (_instance == null)
                 {
+                    _instance = FindObjectOfType<ElementsManager>();
                     Debug.Log("No ElementManager");
                 }
                 return _instance;

@@ -23,7 +23,7 @@ namespace Assets.Scripts.simai
             switchTime = attbutes.SwitchTime;
             trafficMode = (TrafficMode)attbutes.LightMode;
         }
-        public override bool CanDelete => true;
+        public override bool CanDelete => false;
 
         public override bool CanDrag => false;
 

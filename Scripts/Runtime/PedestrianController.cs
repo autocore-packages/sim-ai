@@ -51,9 +51,15 @@ namespace Assets.Scripts.simai
             set;
         }
         public float currentSpeed;
-        private bool isReachTarget = false;
+        protected bool isReachTarget = false;
 
-        private float remainDistance;//与当前目标点的距离
+        protected float RemainDistance
+        {
+            get
+            {
+                return Vector3.Distance(transform.position, AimPos);
+            }
+        }
 
         private int currentIndex = 0;
         
@@ -80,10 +86,6 @@ namespace Assets.Scripts.simai
             }
         }
 
-        private void Update()
-        {
-            remainDistance = Vector3.Distance(transform.position,  AimPos);
-        }
 
 
         private void SetPosList(List<Vec3> vec3s)
@@ -94,7 +96,7 @@ namespace Assets.Scripts.simai
                 PosList.Add(item.GetVector3());
             }
 
-            if (!isReachTarget&&remainDistance<0.2f)
+            if (!isReachTarget&&RemainDistance<0.2f)
             {
                 isReachTarget = true;
 

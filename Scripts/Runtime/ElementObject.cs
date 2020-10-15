@@ -112,6 +112,7 @@ namespace Assets.Scripts.simai
         public void SetObjScale(float value)
         {
             if (!CanScale) return;
+            v3Scale = transform.localScale;
             v3Scale = new Vector3(v3Scale.x * value, v3Scale.y * value, v3Scale.z * value);
             transform.localScale = v3Scale;
         }

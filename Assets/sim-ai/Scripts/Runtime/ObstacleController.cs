@@ -36,9 +36,9 @@ namespace Assets.Scripts.simai
         }
         public override bool CanDelete => true;
 
-        public override bool CanDrag => false;
+        public override bool CanDrag => true;
 
-        public override bool CanScale => false;
+        public override bool CanScale => true;
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             model = attbutes.Model;

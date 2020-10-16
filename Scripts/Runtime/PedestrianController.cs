@@ -22,7 +22,7 @@ namespace Assets.Scripts.simai
         {
             model = attbutes.Model;
             speedObjTarget = attbutes.Speed;
-            isHumanRepeat = attbutes.IsRepeat;
+            SetPedRepeat(attbutes.IsRepeat);
             SetPosList(attbutes.PosArray);
         }
         protected override void Start()
@@ -49,12 +49,18 @@ namespace Assets.Scripts.simai
                 return posList;
             }
         }
+        public void AddPedPos(Vector3 pos)
+        {
+            PosList.Add(pos);
+            if (isPedStop) OnReachTarget();
+        }
+
         public bool isHumanRepeat = true;
         #endregion
 
         public float currentSpeed;
         protected bool isReachTarget = false;
-
+        private bool isPedStop = false;
         protected float RemainDistance
         {
             get
@@ -110,12 +116,15 @@ namespace Assets.Scripts.simai
 
         protected void OnReachTarget()
         {
+            isReachTarget = true;
             PedIndex++;
             if (PedIndex >= PosList.Count)
             {
-                if (!isHumanRepeat)
+                if (!isHumanRepeat || PosList.Count == 1)
                 {
                     PedIndex = PosList.Count - 1;
+                    SetPedstrianStop();
+                    return;
                 }
                 else
                 {
@@ -123,16 +132,19 @@ namespace Assets.Scripts.simai
                 }
             }
             isReachTarget = false;
+            SetPedstrianAim();
         }
         public abstract void SetPedstrianAim();
+        public abstract void SetPedstrianStop();
         public void SetPoslist(int index, Vector3 pos)
         {
             PosList[index] = pos;
         }
 
-        public void SetRepeat(bool value)
+        public void SetPedRepeat(bool value)
         {
             isHumanRepeat = value;
+            if (isPedStop) OnReachTarget();
         }
         public override void ElementReset()
         {

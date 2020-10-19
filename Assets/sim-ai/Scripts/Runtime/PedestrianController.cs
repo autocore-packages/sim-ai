@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public abstract class PedestrianController :ElementObject
+    public abstract class PedestrianController : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
-            ElementAttbutes ea = new ElementAttbutes(true, false, false, false, true, false, false, CanDelete)
+            ElementAttbutes ea = new ElementAttbutes(true, false, false, false, false, true, false, CanDelete)
             {
                 IsRepeat = isHumanRepeat,
                 Name = transform.name,
@@ -38,25 +38,25 @@ namespace Assets.Scripts.simai
 
 
         private List<Vector3> posList;
-        public List<Vector3> PosList 
+        public List<Vector3> PosList
         {
             get
             {
-                if (posList==null || posList.Count <= 0)
+                if (posList == null)
                 {
-                    posList = new List<Vector3> { transform.position };
+                    posList = new List<Vector3> { };
                 }
                 return posList;
             }
         }
+        public bool isHumanRepeat = true;
+        #endregion
+
         public void AddPedPos(Vector3 pos)
         {
             PosList.Add(pos);
             if (isPedStop) OnReachTarget();
         }
-
-        public bool isHumanRepeat = true;
-        #endregion
 
         public float currentSpeed;
         protected bool isReachTarget = false;
@@ -68,8 +68,8 @@ namespace Assets.Scripts.simai
                 return Vector3.Distance(transform.position, AimPos);
             }
         }
-        private int PedIndex = 0;
-        
+        public int PedIndex = 0;
+
 
         protected Vector3 AimPos
         {
@@ -78,7 +78,7 @@ namespace Assets.Scripts.simai
                 if (PosList.Count < 1) return transform.position;
                 else
                 {
-                    if (PedIndex >= PosList.Count) return PosList[PosList.Count - 1];
+                    if (PedIndex >= PosList.Count) return PosList[0];
                     return PosList[PedIndex];
                 }
             }
@@ -106,7 +106,7 @@ namespace Assets.Scripts.simai
         }
         private List<Vec3> GetPosList()
         {
-            List<Vec3> vec3s=new List<Vec3>();
+            List<Vec3> vec3s = new List<Vec3>();
             foreach (var item in PosList)
             {
                 vec3s.Add(new Vec3(item));
@@ -118,24 +118,26 @@ namespace Assets.Scripts.simai
         {
             isReachTarget = true;
             PedIndex++;
+            Debug.Log(PosList.Count + "" + PedIndex);
             if (PedIndex >= PosList.Count)
             {
-                if (!isHumanRepeat || PosList.Count == 1)
+                if (!isHumanRepeat || PosList.Count <= 1)
                 {
                     PedIndex = PosList.Count - 1;
                     SetPedstrianStop();
                     return;
                 }
-                else
-                {
-                    PedIndex = 0;
-                }
+                PedIndex = 0;
             }
             isReachTarget = false;
             SetPedstrianAim();
+            isPedStop = false;
         }
         public abstract void SetPedstrianAim();
-        public abstract void SetPedstrianStop();
+        public virtual void SetPedstrianStop()
+        {
+            isPedStop = true;
+        }
         public void SetPoslist(int index, Vector3 pos)
         {
             PosList[index] = pos;

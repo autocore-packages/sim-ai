@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.simai
 {
-    public class LogicTrafficLight : LogicObj
+    public class LogicTrafficLight : LogicObject
     {
         public Image[] ImagesA;
         public Image[] ImagesB;

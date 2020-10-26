@@ -16,55 +16,55 @@
 */
 #endregion
 
-using System;
+
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class CheckPointController : ElementObject
+    public class ObstacleObj : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
             {
+                Model = model,
                 Name = transform.name,
-                TransformData = new TransformData(transform),
-                Model = model
+                TransformData = new TransformData(transform)
             };
             return ea;
         }
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => true;
+
+        public override bool CanScale => true;
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
             transform.position = attbutes.TransformData.V3Pos.GetVector3();
-            transform.rotation = Quaternion.Euler( attbutes.TransformData.V3Pos.GetVector3());
+            transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
             transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
         }
         protected override void Start()
         {
             base.Start();
         }
-        public override Vector3 OffsetPos => new Vector3(0, -0.5f * v3Scale.y, 0);
+        public override Vector3 OffsetPos => new Vector3(0, 0.5f * v3Scale.y, 0);
 
         public override string NameLogic
         {
             get
             {
-                var logic = ElementsManager.Instance.checkPointManager.Models[model].Logic;
+                var logic = ElementsManager.Instance.obstacleManager.Models[model].Logic;
                 if (logic != null) return logic;
-                else return "CheckPointLogic";
+                else return "ObstacleLogic";
             }
         }
 
-        public override bool CanDelete => true;
-
-        public override bool CanDrag => true;
-
-        public override bool CanScale => true;
-
         public override void ElementReset()
         {
-            base.ElementReset(); 
+            base.ElementReset();
         }
     }
 }

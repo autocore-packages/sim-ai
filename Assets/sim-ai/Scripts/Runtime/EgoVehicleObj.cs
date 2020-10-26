@@ -17,51 +17,49 @@
 #endregion
 
 
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class ObstacleController : ElementObject
+
+    public class EgoVehicleObj : ElementObject
     {
+        public ITrafficLight CurrentTL { get; set; }
+
+        public override bool CanDelete => false;
+
+        public override bool CanDrag => false;
+
+        public override bool CanScale => false;
+
+        public override string NameLogic 
+        {
+            get
+            {
+                return "BlueCarLogic";
+            }
+        }
+
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
             {
-                Model = model,
                 Name = transform.name,
-                TransformData = new TransformData(transform)
+                TransformData = new TransformData(transform),
+                Model = model
             };
             return ea;
         }
-        public override bool CanDelete => true;
-
-        public override bool CanDrag => true;
-
-        public override bool CanScale => true;
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
             transform.position = attbutes.TransformData.V3Pos.GetVector3();
             transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
-            transform.localScale = attbutes.TransformData.V3Sca.GetVector3();
         }
         protected override void Start()
         {
             base.Start();
         }
-        public override Vector3 OffsetPos => new Vector3(0, 0.5f * v3Scale.y, 0);
-
-        public override string NameLogic
-        {
-            get
-            {
-                var logic = ElementsManager.Instance.obstacleManager.Models[model].Logic;
-                if (logic != null) return logic;
-                else return "ObstacleLogic";
-            }
-        }
-
         public override void ElementReset()
         {
             base.ElementReset();

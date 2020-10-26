@@ -45,7 +45,7 @@ namespace Assets.Scripts.simai
         public bool IsInEdit { get; set; } = false;
 
         [HideInInspector]
-        public EgoVehicleController testCar;
+        public EgoVehicleObj testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
 
         public GameObject GONPCManager;

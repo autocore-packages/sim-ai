@@ -33,7 +33,7 @@ namespace Assets.Scripts.simai
     {
         public ElementAttbutes objAttbutes;
         public GameObject elementButton;
-        public LogicObj logicObject;
+        public LogicObject logicObject;
         public Vector3 offsetLogic = Vector3.zero;
         public Vector3 v3Scale;
         public int model= 0;
@@ -80,9 +80,9 @@ namespace Assets.Scripts.simai
                 ElementsManager.Instance.RemoveElement(gameObject);
             }
             if (this is NPCController npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
-            else if (this is PedestrianController ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
-            else if(this is ObstacleController obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
-            else if(this is CheckPointController che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
+            else if (this is PedestrianObj ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
+            else if(this is ObstacleObj obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
+            else if(this is CheckPointObj che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
             else if (this is TrafficLightController tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
             if (elementButton != null) Destroy(elementButton);
         }
@@ -100,7 +100,7 @@ namespace Assets.Scripts.simai
             GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + NameLogic);
             if (logictemp != null)
             {
-                logicObject = Instantiate(logictemp, transform).GetComponent<LogicObj>();
+                logicObject = Instantiate(logictemp, transform).GetComponent<LogicObject>();
                 logicObject.elementObject = this;
                 logicObject.transform.position = transform.position + offsetLogic;
             }
@@ -124,15 +124,15 @@ namespace Assets.Scripts.simai
                 return;
             }
 
-            if (this is EgoVehicleController)
+            if (this is EgoVehicleObj)
             {
                 gameObject.name = "EgoVehicle";
             }
-            else if (this is ObstacleController)
+            else if (this is ObstacleObj)
             {
                 gameObject.name = "Static Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
             }
-            else if (this is PedestrianController)
+            else if (this is PedestrianObj)
             {
                 gameObject.name = "PedestrianController" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
             }
@@ -144,7 +144,7 @@ namespace Assets.Scripts.simai
             {
                 gameObject.name = "NPC Vehicle" + ElementsManager.Instance.nPCManager.NPCList.Count;
             }
-            else if (this is CheckPointController)
+            else if (this is CheckPointObj)
             {
                 gameObject.name = "CheckPoint" + ElementsManager.Instance.checkPointManager.CheckPointList.Count;
             }

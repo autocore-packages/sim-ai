@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class LogicObj : MonoBehaviour
+    public class LogicObject : MonoBehaviour
     {
         public ElementObject elementObject;
         public LogicButton logicButton;

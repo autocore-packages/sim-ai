@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public abstract class PedestrianController : ElementObject
+    public abstract class PedestrianObj : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {

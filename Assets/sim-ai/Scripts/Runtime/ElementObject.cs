@@ -79,7 +79,7 @@ namespace Assets.Scripts.simai
             {
                 ElementsManager.Instance.RemoveElement(gameObject);
             }
-            if (this is NPCController npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
+            if (this is NPCObj npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
             else if (this is PedestrianObj ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
             else if(this is ObstacleObj obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
             else if(this is CheckPointObj che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
@@ -130,17 +130,17 @@ namespace Assets.Scripts.simai
             }
             else if (this is ObstacleObj)
             {
-                gameObject.name = "Static Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
+                gameObject.name = "Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
             }
             else if (this is PedestrianObj)
             {
-                gameObject.name = "PedestrianController" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
+                gameObject.name = "Pedestrian" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
             }
             else if (this is TrafficLightController)
             {
                 gameObject.name = "Traffic Light" + ElementsManager.Instance.trafficlightManager.TrafficLightList.Count;
             }
-            else if (this is NPCController)
+            else if (this is NPCObj)
             {
                 gameObject.name = "NPC Vehicle" + ElementsManager.Instance.nPCManager.NPCList.Count;
             }

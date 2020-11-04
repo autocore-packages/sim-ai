@@ -18,6 +18,7 @@
 
 
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -84,6 +85,7 @@ namespace Assets.Scripts.simai
         }
 
         public Vector3 MouseWorldPos;
+        public Action<Vector3> OnCameraRotate;
 
         private Vector3 PosDragStart;
         private Vector3 MousePosDragStart;

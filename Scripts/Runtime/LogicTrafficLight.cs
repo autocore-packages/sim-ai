@@ -8,6 +8,7 @@ namespace Assets.Scripts.simai
         public Image[] ImagesA;
         public Image[] ImagesB;
         public Text textSecond;
+        public Vector3 offset;
         public override void Start()
         {
             base.Start();
@@ -15,6 +16,11 @@ namespace Assets.Scripts.simai
                 textSecond = transform.GetComponentInChildren<Text>();
             ImagesA = transform.GetChild(0).GetChild(1).GetComponentsInChildren<Image>();
             ImagesB = transform.GetChild(0).GetChild(2).GetComponentsInChildren<Image>();
+            ElementsManager.Instance.OnCameraRotate += SetLogicTextAngle;
+        }
+        private void SetLogicTextAngle(Vector3 angle)
+        {
+            textSecond.transform.rotation = Quaternion.Euler(angle + offset);
         }
         public void SetLogicTrafficLight(int mode)
         {

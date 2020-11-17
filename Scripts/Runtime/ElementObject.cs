@@ -15,11 +15,9 @@
 * limitations under the License.
 */
 #endregion
-using Assets.Scripts;
+
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Assets.Scripts.simai
 {
@@ -83,7 +81,7 @@ namespace Assets.Scripts.simai
             else if (this is PedestrianObj ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
             else if(this is ObstacleObj obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
             else if(this is CheckPointObj che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
-            else if (this is TrafficLightController tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
+            else if (this is TrafficLightObj tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
             if (elementButton != null) Destroy(elementButton);
         }
         protected virtual void Awake()
@@ -136,7 +134,7 @@ namespace Assets.Scripts.simai
             {
                 gameObject.name = "Pedestrian" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
             }
-            else if (this is TrafficLightController)
+            else if (this is TrafficLightObj)
             {
                 gameObject.name = "Traffic Light" + ElementsManager.Instance.trafficlightManager.TrafficLightList.Count;
             }

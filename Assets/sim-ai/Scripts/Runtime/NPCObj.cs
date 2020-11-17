@@ -1,4 +1,21 @@
-﻿using System.Collections;
+﻿#region License
+/*
+* Copyright 2018 AutoCore
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+#endregion
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -74,7 +91,7 @@ namespace Assets.Scripts.simai
         public void NPCInit()
         {
             isCarDrive = true;
-            laneCurrent = MapManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
+            laneCurrent = ElementsManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
             posAimTemp = laneCurrent.List_pos[indexLaneFiset].GetVector3();
             transform.position = posInit;
             indexLane = indexLaneFiset;
@@ -146,7 +163,7 @@ namespace Assets.Scripts.simai
         /// <returns></returns>
         private LaneData SearchNextLane()
         {
-            if (MapManager.Instance.MapData == null) Debug.Log("lanes is null");
+            if (ElementsManager.Instance.RoadsData == null) Debug.Log("lanes is null");
             if (isHaveTarget)
             {
                 int index = ListLane2Target.Count - 1;
@@ -156,7 +173,7 @@ namespace Assets.Scripts.simai
             else
             {
                 listNextLanes = new List<LaneData>();
-                foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
+                foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
                 {
                     float dis = Vector3.Distance(lane.PosStart.GetVector3(), laneCurrent.PosEnd.GetVector3());
                     if (dis == 0) listNextLanes.Add(lane);
@@ -258,7 +275,7 @@ namespace Assets.Scripts.simai
             int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) - 1;
             if (index >= 0)
             {
-                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                laneChangeTarget = ElementsManager.Instance.RoadsData.LanesData[laneCurrent.List_sameLanesID[index]];
                 return true;
             }
             else return false;
@@ -268,7 +285,7 @@ namespace Assets.Scripts.simai
             int index = laneCurrent.List_sameLanesID.IndexOf(laneCurrent.LaneID) + 1;
             if (index < laneCurrent.List_sameLanesID.Count)
             {
-                laneChangeTarget = MapManager.Instance.MapData.LanesData[laneCurrent.List_sameLanesID[index]];
+                laneChangeTarget = ElementsManager.Instance.RoadsData.LanesData[laneCurrent.List_sameLanesID[index]];
                 return true;
             }
             else return false;
@@ -361,7 +378,7 @@ namespace Assets.Scripts.simai
         /// <param name="point"></param>
         public void SetTarget(Vector3 point)
         {
-            laneTarget = MapManager.Instance.SearchNearestPos2Lane(out int index, point);
+            laneTarget = ElementsManager.Instance.SearchNearestPos2Lane(out int index, point);
             indexTarget = index;
             ListLane2Target = new List<LaneData> { laneTarget };
             if (laneTarget == laneCurrent)
@@ -391,7 +408,7 @@ namespace Assets.Scripts.simai
         {
             if (ListLanes.Count >= 30 || lenth > 10000) return;
             LaneData laneLast = ListLanes[ListLanes.Count - 1];
-            foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
+            foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
                 if (ListLanes.Contains(lane)) continue; //剔除掉重复的
@@ -421,7 +438,7 @@ namespace Assets.Scripts.simai
         {
             if (ListLanes.Count >= 30 || lenth > 5000) return;
             LaneData laneLast = ListLanes[ListLanes.Count - 1];
-            foreach (LaneData lane in MapManager.Instance.MapData.LanesData)
+            foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
                 if (ListLanes.Contains(lane) && lane != ListLanes[0]) continue; //剔除掉重复的

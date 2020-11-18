@@ -2,7 +2,7 @@
   "name": "com.autocore.sim-ai",
   "displayName": "sim-ai",
   "description": "AI of Simulator",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "license": "MIT",
   "dependencies": {
 

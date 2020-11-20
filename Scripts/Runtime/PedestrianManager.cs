@@ -22,15 +22,15 @@ namespace Assets.Scripts.simai
 {
     public class PedestrianManager: MonoBehaviour
     {
-        public List<PedestrianObj> PedestrainList = new List<PedestrianObj>();
+        public List<ObjPedestrian> PedestrainList = new List<ObjPedestrian>();
         public Model[] Models;
         public void AddPedestrian(ElementAttbutes attbutes)
         {
             AddPedestrian(attbutes.Model).SetObjAttbutes(attbutes);
         }
-        public PedestrianObj AddPedestrian(int model = 0)
+        public ObjPedestrian AddPedestrian(int model = 0)
         {
-            PedestrianObj pedestrianController = Instantiate(Models[model].Prefab, transform).GetComponent<PedestrianObj>();
+            ObjPedestrian pedestrianController = Instantiate(Models[model].Prefab, transform).GetComponent<ObjPedestrian>();
             pedestrianController.model = model;
             PedestrainList.Add(pedestrianController);
             return pedestrianController;

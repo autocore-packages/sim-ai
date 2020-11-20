@@ -23,15 +23,15 @@ namespace Assets.Scripts.simai
 {
     public class TrafficlightManager : MonoBehaviour
     {
-        public List<TrafficLightObj> TrafficLightList = new List<TrafficLightObj>();
+        public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
 
         public void SetTrafficlight(ElementAttbutes attbutes,string name)
         {
             if (TrafficLightList.Count == 0)
             {
-                TrafficLightList= FindObjectsOfType<TrafficLightObj>().ToList();
+                TrafficLightList= FindObjectsOfType<ObjTrafficLight>().ToList();
             }
-            foreach (TrafficLightObj trafficLight in TrafficLightList)
+            foreach (ObjTrafficLight trafficLight in TrafficLightList)
             {
                 if (trafficLight.name == name)
                 {

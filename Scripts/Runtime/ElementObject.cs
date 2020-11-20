@@ -29,11 +29,18 @@ namespace Assets.Scripts.simai
     }
     public abstract class ElementObject : MonoBehaviour
     {
+        public Transform m_transform;
         public ElementAttbutes objAttbutes;
         public GameObject elementButton;
         public LogicObject logicObject;
         public Vector3 offsetLogic = Vector3.zero;
-        public Vector3 v3Scale;
+        public Vector3 V3Scale
+        {
+            get
+            {
+                return m_transform.localScale;
+            }
+        }
         public int model= 0;
 
         public abstract bool CanDelete { get; }
@@ -75,13 +82,14 @@ namespace Assets.Scripts.simai
             if (ElementsManager.Instance == null) return;
             if (ElementsManager.Instance.ElementList.Contains(this))
             {
-                ElementsManager.Instance.RemoveElement(gameObject);
+                ElementsManager.Instance.RemoveElement(this);
             }
-            if (this is NPCObj npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
-            else if (this is PedestrianObj ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
-            else if(this is ObstacleObj obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
-            else if(this is CheckPointObj che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
-            else if (this is TrafficLightObj tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
+            if (this is ObjNPC npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
+            else if (this is ObjPedestrian ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
+            else if(this is ObjObstacle obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
+            else if(this is ObjCheckPoint che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
+            else if (this is ObjTrafficLight tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
+
             if (elementButton != null) Destroy(elementButton);
         }
         protected virtual void Awake()
@@ -89,6 +97,7 @@ namespace Assets.Scripts.simai
         }
         protected virtual void Start()
         {
+            m_transform = transform;
             ElementInit();
         }
 
@@ -98,21 +107,19 @@ namespace Assets.Scripts.simai
             GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + NameLogic);
             if (logictemp != null)
             {
-                logicObject = Instantiate(logictemp, transform).GetComponent<LogicObject>();
+                logicObject = Instantiate(logictemp, m_transform).GetComponent<LogicObject>();
                 logicObject.elementObject = this;
-                logicObject.transform.position = transform.position + offsetLogic;
+                logicObject.transform.position = m_transform.position + offsetLogic;
             }
             else
             {
-                Debug.LogError("LogicObj missing");
+                Debug.LogError("logicObj missing");
             }
         }
         public void SetObjScale(float value)
         {
             if (!CanScale) return;
-            v3Scale = transform.localScale;
-            v3Scale = new Vector3(v3Scale.x * value, v3Scale.y * value, v3Scale.z * value);
-            transform.localScale = v3Scale;
+            transform.localScale = V3Scale*value;
         }
         private void SetElementName()
         {
@@ -121,28 +128,27 @@ namespace Assets.Scripts.simai
                 gameObject.name = objAttbutes.Name;
                 return;
             }
-
-            if (this is EgoVehicleObj)
+            if (this is ObjEgo)
             {
                 gameObject.name = "EgoVehicle";
             }
-            else if (this is ObstacleObj)
+            else if (this is ObjObstacle)
             {
                 gameObject.name = "Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
             }
-            else if (this is PedestrianObj)
+            else if (this is ObjPedestrian)
             {
                 gameObject.name = "Pedestrian" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
             }
-            else if (this is TrafficLightObj)
+            else if (this is ObjTrafficLight)
             {
                 gameObject.name = "Traffic Light" + ElementsManager.Instance.trafficlightManager.TrafficLightList.Count;
             }
-            else if (this is NPCObj)
+            else if (this is ObjNPC)
             {
                 gameObject.name = "NPC Vehicle" + ElementsManager.Instance.nPCManager.NPCList.Count;
             }
-            else if (this is CheckPointObj)
+            else if (this is ObjCheckPoint)
             {
                 gameObject.name = "CheckPoint" + ElementsManager.Instance.checkPointManager.CheckPointList.Count;
             }

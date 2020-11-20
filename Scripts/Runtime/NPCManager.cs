@@ -23,15 +23,15 @@ namespace Assets.Scripts.simai
 {
     public class NPCManager : MonoBehaviour
     {
-        public List<NPCObj> NPCList = new List<NPCObj>();
+        public List<ObjNPC> NPCList = new List<ObjNPC>();
         public Model[] Models;
         public void AddNPC(ElementAttbutes attbutes)
         {
             AddNPC(attbutes.Model).SetObjAttbutes(attbutes);
         }
-        public NPCObj AddNPC(int model = 0)
+        public ObjNPC AddNPC(int model = 0)
         {
-            NPCObj npc = Instantiate(Models[model].Prefab, transform).GetComponent<NPCObj>();
+            ObjNPC npc = Instantiate(Models[model].Prefab, transform).GetComponent<ObjNPC>();
             npc.model = model;
             NPCList.Add(npc);
             return npc;

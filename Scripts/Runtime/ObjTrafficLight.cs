@@ -21,7 +21,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public class TrafficLightObj : ElementObject
+    public class ObjTrafficLight : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {

@@ -22,15 +22,15 @@ namespace Assets.Scripts.simai
 {
     public class ObstacleManager : MonoBehaviour
     {
-        public List<ObstacleObj> ObstacleList = new List<ObstacleObj>();
+        public List<ObjObstacle> ObstacleList = new List<ObjObstacle>();
         public Model[] Models;
         public void AddObstacle(ElementAttbutes attbutes)
         {
             AddObstacle(attbutes.Model).SetObjAttbutes(attbutes);
         }
-        public ObstacleObj AddObstacle(int model = 0)
+        public ObjObstacle AddObstacle(int model = 0)
         { 
-            ObstacleObj obstacleController = Instantiate(Models[model].Prefab, transform).GetComponent<ObstacleObj>();
+            ObjObstacle obstacleController = Instantiate(Models[model].Prefab, transform).GetComponent<ObjObstacle>();
             obstacleController.model = model;
             ObstacleList.Add(obstacleController);
             return obstacleController;

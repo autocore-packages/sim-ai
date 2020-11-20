@@ -34,10 +34,12 @@ namespace Assets.Scripts.simai
             ImagesA = transform.GetChild(0).GetChild(1).GetComponentsInChildren<Image>();
             ImagesB = transform.GetChild(0).GetChild(2).GetComponentsInChildren<Image>();
             ElementsManager.Instance.OnCameraRotate += SetLogicTextAngle;
+            Debug.Log("add");
         }
         private void SetLogicTextAngle(Vector3 angle)
         {
             textSecond.transform.rotation = Quaternion.Euler(angle + offset);
+            Debug.Log("rot");
         }
         public void SetLogicTrafficLight(int mode)
         {

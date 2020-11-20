@@ -23,16 +23,16 @@ namespace Assets.Scripts.simai
 {
     public class CheckPointManager : MonoBehaviour
     {
-        public List<CheckPointObj> CheckPointList = new List<CheckPointObj>();
+        public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
         [SerializeField]
         public Model[] Models;
         public void AddCheckPoint(ElementAttbutes attbutes)
         {
             AddCheckPoint(attbutes.Model).SetObjAttbutes(attbutes);
         }
-        public CheckPointObj AddCheckPoint(int model)
+        public ObjCheckPoint AddCheckPoint(int model)
         {
-            CheckPointObj checkPointController= Instantiate(Models[model].Prefab, transform).GetComponent<CheckPointObj>();
+            ObjCheckPoint checkPointController= Instantiate(Models[model].Prefab, transform).GetComponent<ObjCheckPoint>();
             checkPointController.model = model;
             CheckPointList.Add(checkPointController);
             return checkPointController;

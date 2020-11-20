@@ -16,30 +16,13 @@
 */
 #endregion
 
-
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-
-    public class EgoVehicleObj : ElementObject
+    public class ObjCheckPoint : ElementObject
     {
-        public ITrafficLight CurrentTL { get; set; }
-
-        public override bool CanDelete => false;
-
-        public override bool CanDrag => false;
-
-        public override bool CanScale => false;
-
-        public override string NameLogic 
-        {
-            get
-            {
-                return "BlueCarLogic";
-            }
-        }
-
         public override ElementAttbutes GetObjAttbutes()
         {
             ElementAttbutes ea = new ElementAttbutes(true, true, false, false, false, false, false, CanDelete)
@@ -53,16 +36,36 @@ namespace Assets.Scripts.simai
         public override void SetObjAttbutes(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
-            transform.position = attbutes.TransformData.V3Pos.GetVector3();
-            transform.rotation = Quaternion.Euler(attbutes.TransformData.V3Pos.GetVector3());
+            TransformData data = attbutes.TransformData;
+            transform.position = data.V3Pos.GetVector3();
+            transform.rotation = Quaternion.Euler(data.V3Pos.GetVector3());
+            transform.localScale = data.V3Sca.GetVector3();
         }
         protected override void Start()
         {
             base.Start();
         }
+        public override Vector3 OffsetPos => new Vector3(0, -0.5f * V3Scale.y, 0);
+
+        public override string NameLogic
+        {
+            get
+            {
+                var logic = ElementsManager.Instance.checkPointManager.Models[model].Logic;
+                if (logic != null) return logic;
+                else return "CheckPointLogic";
+            }
+        }
+
+        public override bool CanDelete => true;
+
+        public override bool CanDrag => true;
+
+        public override bool CanScale => true;
+
         public override void ElementReset()
         {
-            base.ElementReset();
+            base.ElementReset(); 
         }
     }
 }

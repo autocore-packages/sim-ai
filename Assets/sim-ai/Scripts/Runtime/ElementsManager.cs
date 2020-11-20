@@ -32,7 +32,7 @@ namespace Assets.Scripts.simai
         public bool IsInEdit { get; set; } = false;
 
         [HideInInspector]
-        public EgoVehicleObj testCar;
+        public ObjEgo testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
 
         public GameObject GONPCManager;
@@ -49,9 +49,6 @@ namespace Assets.Scripts.simai
 
         public GameObject GOCheckPointManager;
         public CheckPointManager checkPointManager;
-
-
-        private GameObject objTemp;
 
         public Texture2D textureTarget;
         public CursorMode cm = CursorMode.Auto;
@@ -101,7 +98,6 @@ namespace Assets.Scripts.simai
             if (Instance == null)
             {
                 Instance = this;
-                Debug.Log(" has been Init");
             }
             else
             {

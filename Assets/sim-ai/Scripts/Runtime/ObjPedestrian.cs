@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public abstract class PedestrianObj : ElementObject
+    public abstract class ObjPedestrian : ElementObject
     {
         public override ElementAttbutes GetObjAttbutes()
         {
@@ -66,6 +66,7 @@ namespace Assets.Scripts.simai
             }
         }
         public bool isHumanRepeat = true;
+        public bool isHumanWait = false;
         #endregion
 
         public void AddPedPos(Vector3 pos)
@@ -134,7 +135,6 @@ namespace Assets.Scripts.simai
         {
             isReachTarget = true;
             PedIndex++;
-            Debug.Log(PosList.Count + "" + PedIndex);
             if (PedIndex >= PosList.Count)
             {
                 if (!isHumanRepeat || PosList.Count <= 1)

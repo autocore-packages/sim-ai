@@ -67,6 +67,5 @@ namespace Assets.Scripts.simai
         public string Name { get; set; }
         public Vec3 PosInit { get; set; }
         public int Model { get; set; }
-        public bool CanDelete { get; set; }
     }
 }

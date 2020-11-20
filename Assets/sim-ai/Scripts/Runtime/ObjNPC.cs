@@ -21,7 +21,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.simai
 {
-    public abstract class NPCObj : ElementObject
+    public abstract class ObjNPC : ElementObject
     {
         protected override void Start()
         {
@@ -202,7 +202,7 @@ namespace Assets.Scripts.simai
 
             if (RayCheckCar(PosCarOrigin, DirCarGo, out ElementObject element))
             {
-                if(element is NPCObj)
+                if(element is ObjNPC)
                 {
                     isObstacleFront = true;
                     return;

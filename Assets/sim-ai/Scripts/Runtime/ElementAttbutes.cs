@@ -58,7 +58,6 @@ namespace Assets.Scripts.simai
         public float SwitchTime { get; set; }
         public bool IsRepeat { get; set; }
         public List<Vec3> PosArray { get; set; }
-        public bool IsWait { get; set; }
         public TransformData TransformData { get; set; }
         public Vec3 PosEnd { get; set; }
         public Vec3 PosStart { get; set; }

@@ -411,8 +411,9 @@ namespace Assets.Scripts.simai
             foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
-                if (ListLanes.Contains(lane)) continue; //剔除掉重复的
-                if ((lane.List_sameLanesID.Contains(laneCurrent.LaneID) || lane == laneCurrent) && lenth < dis2TargetMin)
+                if (lenth > dis2TargetMin) continue;//剔除掉长的
+                if (ListLanes.Contains(lane) && lane != ListLanes[0]) continue; //剔除掉重复的
+                if (lane.List_sameLanesID.Contains(laneCurrent.LaneID) || lane == laneCurrent)
                 {
                     ListLanes.Add(lane);
                     dis2TargetMin = lenth;
@@ -441,6 +442,7 @@ namespace Assets.Scripts.simai
             foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
             {
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
+                if (lenth > dis2TargetMin) continue;//长了的跳过
                 if (ListLanes.Contains(lane) && lane != ListLanes[0]) continue; //剔除掉重复的
                 if ((lane.List_sameLanesID.Contains(laneCurrent.LaneID) || lane == laneCurrent) && lenth < dis2TargetMin)
                 {

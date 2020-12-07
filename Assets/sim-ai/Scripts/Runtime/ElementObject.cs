@@ -116,9 +116,9 @@ namespace Assets.Scripts.simai
                 Debug.LogError("logicObj missing");
             }
         }
-        public void SetObjScale(float value)
+        public void SetObjScale(float value) 
         {
-            if (!CanScale) return;
+            if (!CanScale) return; 
             transform.localScale = V3Scale*value;
         }
         private void SetElementName()

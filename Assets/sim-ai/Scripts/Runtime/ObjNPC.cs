@@ -409,10 +409,10 @@ namespace Assets.Scripts.simai
             if (ListLanes.Count >= 30 || lenth > 10000) return;
             LaneData laneLast = ListLanes[ListLanes.Count - 1];
             foreach (LaneData lane in ElementsManager.Instance.RoadsData.LanesData)
-            {
+            { 
                 if (lane.PosEnd != laneLast.PosStart) continue;//不连接的线跳过
                 if (lenth > dis2TargetMin) continue;//剔除掉长的
-                if (ListLanes.Contains(lane) && lane != ListLanes[0]) continue; //剔除掉重复的
+                if (ListLanes.Contains(lane) && lane != laneCurrent) continue; //剔除掉重复的
                 if (lane.List_sameLanesID.Contains(laneCurrent.LaneID) || lane == laneCurrent)
                 {
                     ListLanes.Add(lane);

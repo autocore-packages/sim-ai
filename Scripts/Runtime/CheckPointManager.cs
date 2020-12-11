@@ -25,14 +25,14 @@ namespace Assets.Scripts.simai
     {
         public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
         [SerializeField]
-        public Model[] Models;
+        public Model[] CheckPointModels;
         public void AddCheckPoint(ElementAttbutes attbutes)
         {
             AddCheckPoint(attbutes.Model).SetObjAttbutes(attbutes);
         }
         public ObjCheckPoint AddCheckPoint(int model)
         {
-            ObjCheckPoint checkPointController= Instantiate(Models[model].Prefab, transform).GetComponent<ObjCheckPoint>();
+            ObjCheckPoint checkPointController= Instantiate(CheckPointModels[model].GOPrefab, transform).GetComponent<ObjCheckPoint>();
             checkPointController.model = model;
             CheckPointList.Add(checkPointController);
             return checkPointController;

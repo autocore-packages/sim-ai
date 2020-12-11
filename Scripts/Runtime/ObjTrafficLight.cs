@@ -62,7 +62,14 @@ namespace Assets.Scripts.simai
         private bool isApass;
         private LogicTrafficLight ltl;
 
-        public override string NameLogic => "TrafficLightLogic";
+        public override GameObject LogicPrefab
+        {
+            get
+            {
+                var logic = ElementsManager.Instance.TrafficlightModels[model].LogicPrefab;
+                return logic;
+            }
+        }
 
         protected override void Start()
         {

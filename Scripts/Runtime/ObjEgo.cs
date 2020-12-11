@@ -32,11 +32,12 @@ namespace Assets.Scripts.simai
 
         public override bool CanScale => false;
 
-        public override string NameLogic 
+        public override GameObject LogicPrefab
         {
             get
             {
-                return "BlueCarLogic";
+                var logic = ElementsManager.Instance.EgoModels[model].LogicPrefab;
+                return logic;
             }
         }
 

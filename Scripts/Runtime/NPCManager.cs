@@ -31,7 +31,7 @@ namespace Assets.Scripts.simai
         }
         public ObjNPC AddNPC(int model = 0)
         {
-            ObjNPC npc = Instantiate(Models[model].Prefab, transform).GetComponent<ObjNPC>();
+            ObjNPC npc = Instantiate(Models[model].GOPrefab, transform).GetComponent<ObjNPC>();
             npc.model = model;
             NPCList.Add(npc);
             return npc;

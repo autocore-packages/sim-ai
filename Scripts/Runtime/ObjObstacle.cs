@@ -52,13 +52,12 @@ namespace Assets.Scripts.simai
         }
         public override Vector3 OffsetPos => new Vector3(0, 0.5f * V3Scale.y, 0);
 
-        public override string NameLogic
+        public override GameObject LogicPrefab
         {
             get
             {
-                var logic = ElementsManager.Instance.obstacleManager.Models[model].Logic;
-                if (logic != null) return logic;
-                else return "ObstacleLogic";
+                var logic = ElementsManager.Instance.ObstacleModels[model].LogicPrefab;
+                return logic;
             }
         }
 

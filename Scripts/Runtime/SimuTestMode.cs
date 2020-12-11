@@ -43,6 +43,7 @@ namespace Assets.Scripts.simai
         public string TestModeName { get; set; }
         public DateTime LastTime { get; set; }
         public string MapName { get; set; }
+        public List<ElementAttbutes> EgoAtts { get; set; }
         public TransformData TestCarStart { get; set; }
         public List<ElementAttbutes> CheckPointAtts { get; set; }
         public List<ElementAttbutes> ObstacleAtts { get; set; }

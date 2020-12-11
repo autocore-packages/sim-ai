@@ -30,7 +30,7 @@ namespace Assets.Scripts.simai
         }
         public ObjPedestrian AddPedestrian(int model = 0)
         {
-            ObjPedestrian pedestrianController = Instantiate(Models[model].Prefab, transform).GetComponent<ObjPedestrian>();
+            ObjPedestrian pedestrianController = Instantiate(Models[model].GOPrefab, transform).GetComponent<ObjPedestrian>();
             pedestrianController.model = model;
             PedestrainList.Add(pedestrianController);
             return pedestrianController;

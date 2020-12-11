@@ -101,13 +101,12 @@ namespace Assets.Scripts.simai
             }
         }
 
-        public override string NameLogic
+        public override GameObject LogicPrefab
         {
             get
             {
-                var logic = ElementsManager.Instance.pedestrianManager.Models[model].Logic;
-                if (logic != null) return logic;
-                else return "HumanLogic";
+                var logic = ElementsManager.Instance.PedstrainModels[model].LogicPrefab;
+                return logic;
             }
         }
 

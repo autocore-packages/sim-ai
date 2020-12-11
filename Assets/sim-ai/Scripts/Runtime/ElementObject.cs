@@ -24,8 +24,8 @@ namespace Assets.Scripts.simai
     [Serializable]
     public class Model
     {
-        public GameObject Prefab;
-        public string Logic;
+        public GameObject GOPrefab;
+        public GameObject LogicPrefab;
     }
     public abstract class ElementObject : MonoBehaviour
     {
@@ -46,7 +46,7 @@ namespace Assets.Scripts.simai
         public abstract bool CanDelete { get; }
         public abstract bool CanDrag { get; }
         public abstract bool CanScale { get; }
-        public abstract string NameLogic
+        public abstract GameObject LogicPrefab
         {
             get;
         }
@@ -84,11 +84,12 @@ namespace Assets.Scripts.simai
             {
                 ElementsManager.Instance.RemoveElement(this);
             }
-            if (this is ObjNPC npc) ElementsManager.Instance.nPCManager.NPCList.Remove(npc);
-            else if (this is ObjPedestrian ped) ElementsManager.Instance.pedestrianManager.PedestrainList.Remove(ped);
-            else if(this is ObjObstacle obs) ElementsManager.Instance.obstacleManager.ObstacleList.Remove(obs);
-            else if(this is ObjCheckPoint che) ElementsManager.Instance.checkPointManager.CheckPointList.Remove(che);
-            else if (this is ObjTrafficLight tra) ElementsManager.Instance.trafficlightManager.TrafficLightList.Remove(tra);
+            if (this is ObjNPC npc) ElementsManager.Instance.NPCList.Remove(npc);
+            else if (this is ObjEgo ego) ElementsManager.Instance.EgoList.Remove(ego);
+            else if (this is ObjPedestrian ped) ElementsManager.Instance.PedestrainList.Remove(ped);
+            else if(this is ObjObstacle obs) ElementsManager.Instance.ObstacleList.Remove(obs);
+            else if(this is ObjCheckPoint che) ElementsManager.Instance.CheckPointList.Remove(che);
+            else if (this is ObjTrafficLight tra) ElementsManager.Instance.TrafficLightList.Remove(tra);
 
             if (elementButton != null) Destroy(elementButton);
         }
@@ -104,10 +105,9 @@ namespace Assets.Scripts.simai
         private void SetLogicObj()
         {
             if (logicObject != null) return;
-            GameObject logictemp = (GameObject)Resources.Load("LogicObjs/" + NameLogic);
-            if (logictemp != null)
+            if (LogicPrefab != null)
             {
-                logicObject = Instantiate(logictemp, m_transform).GetComponent<LogicObject>();
+                logicObject = Instantiate(LogicPrefab, m_transform).GetComponent<LogicObject>();
                 logicObject.elementObject = this;
                 logicObject.transform.position = m_transform.position + offsetLogic;
             }
@@ -134,23 +134,23 @@ namespace Assets.Scripts.simai
             }
             else if (this is ObjObstacle)
             {
-                gameObject.name = "Obstacle" + ElementsManager.Instance.obstacleManager.ObstacleList.Count;
+                gameObject.name = "Obstacle" + ElementsManager.Instance.ObstacleList.Count;
             }
             else if (this is ObjPedestrian)
             {
-                gameObject.name = "Pedestrian" + ElementsManager.Instance.pedestrianManager.PedestrainList.Count;
+                gameObject.name = "Pedestrian" + ElementsManager.Instance.PedestrainList.Count;
             }
             else if (this is ObjTrafficLight)
             {
-                gameObject.name = "Traffic Light" + ElementsManager.Instance.trafficlightManager.TrafficLightList.Count;
+                gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.Count;
             }
             else if (this is ObjNPC)
             {
-                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.nPCManager.NPCList.Count;
+                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.NPCList.Count;
             }
             else if (this is ObjCheckPoint)
             {
-                gameObject.name = "CheckPoint" + ElementsManager.Instance.checkPointManager.CheckPointList.Count;
+                gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.Count;
             }
         }
         public virtual void ElementReset()

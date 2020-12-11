@@ -37,13 +37,12 @@ namespace Assets.Scripts.simai
         public override bool CanDrag => false;
 
         public override bool CanScale => false;
-        public override string NameLogic
+        public override GameObject LogicPrefab
         {
             get
             {
-                var logic = ElementsManager.Instance.nPCManager.Models[model].Logic;
-                if (logic!= null) return logic;
-                else return "GreenCarLogic";
+                var logic = ElementsManager.Instance.NPCModels[model].LogicPrefab;
+                return logic;
             }
         }
 

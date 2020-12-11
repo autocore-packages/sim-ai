@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.simai
@@ -30,25 +31,104 @@ namespace Assets.Scripts.simai
             get; private set;
         }
         public bool IsInEdit { get; set; } = false;
+        public ObjEgo CurrentEgo
+        {
+            get
+            {
+                return EgoList[indexEgo];
+            }
+        }
+        private int indexEgo=0;
 
         [HideInInspector]
         public ObjEgo testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
+        public List<ObjEgo> EgoList = new List<ObjEgo>();
+        public List<ObjNPC> NPCList = new List<ObjNPC>();
+        public List<ObjPedestrian> PedestrainList = new List<ObjPedestrian>();
+        public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
+        public List<ObjObstacle> ObstacleList = new List<ObjObstacle>();
 
-        public GameObject GONPCManager;
-        public NPCManager nPCManager;
+        public Model[] EgoModels;
+        public Model[] NPCModels;
+        public Model[] PedstrainModels;
+        public Model[] CheckPointModels;
+        public Model[] ObstacleModels;
+        public Model[] TrafficlightModels;
+        public void AddEgo(ElementAttbutes attbutes)
+        {
+            AddEgo(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public ObjEgo AddEgo(int model = 0)
+        {
+            ObjEgo ego = Instantiate(EgoModels[model].GOPrefab, transform).GetComponent<ObjEgo>();
+            ego.model = model;
+            EgoList.Add(ego);
+            return ego;
+        }
+        public void AddNPC(ElementAttbutes attbutes)
+        {
+            AddNPC(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public ObjNPC AddNPC(int model = 0)
+        {
+            ObjNPC npc = Instantiate(NPCModels[model].GOPrefab, transform).GetComponent<ObjNPC>();
+            npc.model = model;
+            NPCList.Add(npc);
+            return npc;
+        }
+        public void AddCheckPoint(ElementAttbutes attbutes)
+        {
+            AddCheckPoint(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public ObjCheckPoint AddCheckPoint(int model)
+        {
+            ObjCheckPoint checkPointController = Instantiate(CheckPointModels[model].GOPrefab, transform).GetComponent<ObjCheckPoint>();
+            checkPointController.model = model;
+            CheckPointList.Add(checkPointController);
+            return checkPointController;
+        }
 
-        public GameObject GOPedestrianManager;
-        public PedestrianManager pedestrianManager;
+        public void AddObstacle(ElementAttbutes attbutes)
+        {
+            AddObstacle(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public ObjObstacle AddObstacle(int model = 0)
+        {
+            ObjObstacle obstacleController = Instantiate(ObstacleModels[model].GOPrefab, transform).GetComponent<ObjObstacle>();
+            obstacleController.model = model;
+            ObstacleList.Add(obstacleController);
+            return obstacleController;
+        }
 
-        public GameObject GOObstacleManager;
-        public ObstacleManager obstacleManager;
+        public void AddPedestrian(ElementAttbutes attbutes)
+        {
+            AddPedestrian(attbutes.Model).SetObjAttbutes(attbutes);
+        }
+        public ObjPedestrian AddPedestrian(int model = 0)
+        {
+            ObjPedestrian pedestrianController = Instantiate(PedstrainModels[model].GOPrefab, transform).GetComponent<ObjPedestrian>();
+            pedestrianController.model = model;
+            PedestrainList.Add(pedestrianController);
+            return pedestrianController;
+        }
 
-        public GameObject GOTrafficlghtManager;
-        public TrafficlightManager trafficlightManager;
+        public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
+        public void SetTrafficlight(ElementAttbutes attbutes, string name)
+        {
+            if (TrafficLightList.Count == 0)
+            {
+                TrafficLightList = FindObjectsOfType<ObjTrafficLight>().ToList();
+            }
+            foreach (ObjTrafficLight trafficLight in TrafficLightList)
+            {
+                if (trafficLight.name == name)
+                {
+                    trafficLight.objAttbutes = attbutes;
 
-        public GameObject GOCheckPointManager;
-        public CheckPointManager checkPointManager;
+                }
+            }
+        }
 
         public Texture2D textureTarget;
         public CursorMode cm = CursorMode.Auto;
@@ -104,11 +184,6 @@ namespace Assets.Scripts.simai
                 Destroy(gameObject);
                 return;
             }
-            if (nPCManager == null) nPCManager = Instantiate(GONPCManager, transform).GetComponent<NPCManager>();
-            if (pedestrianManager == null) pedestrianManager = Instantiate(GOPedestrianManager, transform).GetComponent<PedestrianManager>();
-            if (obstacleManager == null) obstacleManager = Instantiate(GOObstacleManager, transform).GetComponent<ObstacleManager>();
-            if (checkPointManager == null) checkPointManager = Instantiate(checkPointManager, transform).GetComponent<CheckPointManager>();
-            if (trafficlightManager == null) trafficlightManager = Instantiate(GOTrafficlghtManager, transform).GetComponent<TrafficlightManager>();
         }
 
         public bool isShowLine;
@@ -137,40 +212,46 @@ namespace Assets.Scripts.simai
         }
         public void SetMapElements()
         {
-            if (testMode.TestCarStart != null) testCar.ElementReset();
+            if (testMode.EgoAtts != null)
+            {
+                foreach (ElementAttbutes attrubute in testMode.EgoAtts)
+                {
+                    AddEgo(attrubute);
+                }
+            }
             if (testMode.CheckPointAtts != null && testMode.CheckPointAtts.Count > 0)
             {
                 foreach (ElementAttbutes attrubute in testMode.CheckPointAtts)
-                {
-                    checkPointManager.AddCheckPoint(attrubute);
+                {                                                
+                    AddCheckPoint(attrubute);
                 }
             }
             if (testMode.ObstacleAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.ObstacleAtts)
                 {
-                    obstacleManager.AddObstacle(attrubute);
+                   AddObstacle(attrubute);
                 }
             }
             if (testMode.CarAIAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.CarAIAtts)
                 {
-                   nPCManager.AddNPC(attrubute);
+                   AddNPC(attrubute);
                 }
             }
             if (testMode.HumanAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.HumanAtts)
                 {
-                    pedestrianManager.AddPedestrian(attrubute);
+                    AddPedestrian(attrubute);
                 }
             }
             if (testMode.TrafficLightAtts != null)
             {
                 foreach (ElementAttbutes attrubute in testMode.TrafficLightAtts)
                 {
-                    trafficlightManager.SetTrafficlight(attrubute, attrubute.Name);
+                    SetTrafficlight(attrubute, attrubute.Name);
                 }
             }
         }

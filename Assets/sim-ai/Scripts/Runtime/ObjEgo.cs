@@ -37,6 +37,7 @@ namespace Assets.Scripts.simai
             get
             {
                 var logic = ElementsManager.Instance.EgoModels[model].LogicPrefab;
+                if (logic == null) Debug.Log("No logic");
                 return logic;
             }
         }

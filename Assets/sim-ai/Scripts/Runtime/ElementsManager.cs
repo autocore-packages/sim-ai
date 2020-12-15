@@ -34,20 +34,19 @@ namespace Assets.Scripts.simai
         public ObjEgo CurrentEgo
         {
             get
-            {
+            { 
                 return EgoList[indexEgo];
             }
         }
         private int indexEgo=0;
 
-        [HideInInspector]
-        public ObjEgo testCar;
         public List<ElementObject> ElementList = new List<ElementObject>();
         public List<ObjEgo> EgoList = new List<ObjEgo>();
         public List<ObjNPC> NPCList = new List<ObjNPC>();
         public List<ObjPedestrian> PedestrainList = new List<ObjPedestrian>();
         public List<ObjCheckPoint> CheckPointList = new List<ObjCheckPoint>();
         public List<ObjObstacle> ObstacleList = new List<ObjObstacle>();
+        public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
 
         public Model[] EgoModels;
         public Model[] NPCModels;
@@ -113,7 +112,6 @@ namespace Assets.Scripts.simai
             return pedestrianController;
         }
 
-        public List<ObjTrafficLight> TrafficLightList = new List<ObjTrafficLight>();
         public void SetTrafficlight(ElementAttbutes attbutes, string name)
         {
             if (TrafficLightList.Count == 0)

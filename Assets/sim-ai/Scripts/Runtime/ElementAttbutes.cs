@@ -44,7 +44,7 @@ namespace Assets.Scripts.simai
             IsShowTraffic = light;
             IsShowDelete = delete;
         }
-
+        public int ID { get; set; }
         public bool IsShowName { get; set; }
         public bool IsShowPos { get; set; }
         public bool IsShowRot { get; set; }

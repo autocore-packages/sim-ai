@@ -62,10 +62,13 @@ namespace Assets.Scripts.simai
         public abstract void SetObjAttbutes(ElementAttbutes attbutes);
         public virtual void ElementInit()
         {
-            if (!ElementsManager.Instance.ElementList.Contains(this))
-            {
-                ElementsManager.Instance.ElementList.Add(this);
-            }
+            if (!ElementsManager.Instance.ElementList.Contains(this)) ElementsManager.Instance.ElementList.Add(this);
+            if (this is ObjNPC npc) ElementsManager.Instance.NPCList.Add(npc);
+            else if (this is ObjEgo ego) ElementsManager.Instance.EgoList.Add(ego);
+            else if (this is ObjPedestrian ped) ElementsManager.Instance.PedestrainList.Add(ped);
+            else if (this is ObjObstacle obs) ElementsManager.Instance.ObstacleList.Add(obs);
+            else if (this is ObjCheckPoint che) ElementsManager.Instance.CheckPointList.Add(che);
+            else if (this is ObjTrafficLight tra) ElementsManager.Instance.TrafficLightList.Add(tra);
             SetElementName();
             SetLogicObj();
         }
@@ -80,15 +83,12 @@ namespace Assets.Scripts.simai
         public virtual void DestroyElement()
         {
             if (ElementsManager.Instance == null) return;
-            if (ElementsManager.Instance.ElementList.Contains(this))
-            {
-                ElementsManager.Instance.RemoveElement(this);
-            }
+            if (ElementsManager.Instance.ElementList.Contains(this)) ElementsManager.Instance.RemoveElement(this);
             if (this is ObjNPC npc) ElementsManager.Instance.NPCList.Remove(npc);
             else if (this is ObjEgo ego) ElementsManager.Instance.EgoList.Remove(ego);
             else if (this is ObjPedestrian ped) ElementsManager.Instance.PedestrainList.Remove(ped);
-            else if(this is ObjObstacle obs) ElementsManager.Instance.ObstacleList.Remove(obs);
-            else if(this is ObjCheckPoint che) ElementsManager.Instance.CheckPointList.Remove(che);
+            else if (this is ObjObstacle obs) ElementsManager.Instance.ObstacleList.Remove(obs);
+            else if (this is ObjCheckPoint che) ElementsManager.Instance.CheckPointList.Remove(che);
             else if (this is ObjTrafficLight tra) ElementsManager.Instance.TrafficLightList.Remove(tra);
 
             if (elementButton != null) Destroy(elementButton);
@@ -102,6 +102,11 @@ namespace Assets.Scripts.simai
             ElementInit();
         }
 
+        public void SetObjScale(float value) 
+        {
+            if (!CanScale) return; 
+            transform.localScale = V3Scale*value;
+        }
         private void SetLogicObj()
         {
             if (logicObject != null) return;
@@ -115,11 +120,6 @@ namespace Assets.Scripts.simai
             {
                 Debug.LogError("logicObj missing");
             }
-        }
-        public void SetObjScale(float value) 
-        {
-            if (!CanScale) return; 
-            transform.localScale = V3Scale*value;
         }
         private void SetElementName()
         {

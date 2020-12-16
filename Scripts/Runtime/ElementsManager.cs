@@ -119,11 +119,10 @@ namespace Assets.Scripts.simai
                 TrafficLightList = FindObjectsOfType<ObjTrafficLight>().ToList();
             }
             foreach (ObjTrafficLight trafficLight in TrafficLightList)
-            {
+            {   
                 if (trafficLight.name == name)
                 {
                     trafficLight.objAttbutes = attbutes;
-
                 }
             }
         }

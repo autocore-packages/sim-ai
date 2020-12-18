@@ -78,7 +78,7 @@ namespace Assets.Scripts.simai
             trafficLightGroupA = transform.GetChild(0).GetComponentsInChildren<ITrafficLight>();
             trafficLightGroupB = transform.GetChild(1).GetComponentsInChildren<ITrafficLight>();
             SetLights();
-            UpdateElementAttributes();
+            UpdateElement2Attributes();
         }
 
         private void Update()

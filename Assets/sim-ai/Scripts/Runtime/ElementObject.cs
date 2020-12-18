@@ -72,7 +72,7 @@ namespace Assets.Scripts.simai
             SetElementName();
             SetLogicObj();
         }
-        public void UpdateElementAttributes()
+        public void UpdateElement2Attributes()
         {
             objAttbutes = GetObjAttbutes();
         }
@@ -155,7 +155,7 @@ namespace Assets.Scripts.simai
         }
         public virtual void ElementReset()
         {
-            if (objAttbutes != null) UpdateElementAttributes();
+            if (objAttbutes != null) SetObjAttbutes(objAttbutes);
             else Debug.Log("No att");
         }
     }

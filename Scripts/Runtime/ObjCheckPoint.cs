@@ -33,7 +33,7 @@ namespace Assets.Scripts.simai
             };
             return ea;
         }
-        public override void SetObjAttbutes(ElementAttbutes attbutes)
+        public override void SetObjWithAttbute(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
             TransformData data = attbutes.TransformData;

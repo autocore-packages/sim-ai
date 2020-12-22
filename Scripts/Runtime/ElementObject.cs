@@ -59,7 +59,7 @@ namespace Assets.Scripts.simai
         }
         public float speedObjTarget;
         public abstract ElementAttbutes GetObjAttbutes();
-        public abstract void SetObjAttbutes(ElementAttbutes attbutes);
+        public abstract void SetObjWithAttbute(ElementAttbutes attbutes);
         public virtual void ElementInit()
         {
             if (!ElementsManager.Instance.ElementList.Contains(this)) ElementsManager.Instance.ElementList.Add(this);
@@ -155,7 +155,7 @@ namespace Assets.Scripts.simai
         }
         public virtual void ElementReset()
         {
-            if (objAttbutes != null) SetObjAttbutes(objAttbutes);
+            if (objAttbutes != null) SetObjWithAttbute(objAttbutes);
             else Debug.Log("No att");
         }
     }

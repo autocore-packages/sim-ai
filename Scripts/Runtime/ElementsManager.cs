@@ -56,7 +56,7 @@ namespace Assets.Scripts.simai
         public Model[] TrafficlightModels;
         public void AddEgo(ElementAttbutes attbutes)
         {
-            AddEgo(attbutes.Model).SetObjAttbutes(attbutes);
+            AddEgo(attbutes.Model).SetObjWithAttbute(attbutes);
         }
         public ObjEgo AddEgo(int model = 0)
         {
@@ -67,7 +67,7 @@ namespace Assets.Scripts.simai
         }
         public void AddNPC(ElementAttbutes attbutes)
         {
-            AddNPC(attbutes.Model).SetObjAttbutes(attbutes);
+            AddNPC(attbutes.Model).SetObjWithAttbute(attbutes);
         }
         public ObjNPC AddNPC(int model = 0)
         {
@@ -78,7 +78,7 @@ namespace Assets.Scripts.simai
         }
         public void AddCheckPoint(ElementAttbutes attbutes)
         {
-            AddCheckPoint(attbutes.Model).SetObjAttbutes(attbutes);
+            AddCheckPoint(attbutes.Model).SetObjWithAttbute(attbutes);
         }
         public ObjCheckPoint AddCheckPoint(int model)
         {
@@ -90,7 +90,7 @@ namespace Assets.Scripts.simai
 
         public void AddObstacle(ElementAttbutes attbutes)
         {
-            AddObstacle(attbutes.Model).SetObjAttbutes(attbutes);
+            AddObstacle(attbutes.Model).SetObjWithAttbute(attbutes);
         }
         public ObjObstacle AddObstacle(int model = 0)
         {
@@ -102,7 +102,7 @@ namespace Assets.Scripts.simai
 
         public void AddPedestrian(ElementAttbutes attbutes)
         {
-            AddPedestrian(attbutes.Model).SetObjAttbutes(attbutes);
+            AddPedestrian(attbutes.Model).SetObjWithAttbute(attbutes);
         }
         public ObjPedestrian AddPedestrian(int model = 0)
         {

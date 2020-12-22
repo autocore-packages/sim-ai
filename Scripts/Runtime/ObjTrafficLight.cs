@@ -34,7 +34,7 @@ namespace Assets.Scripts.simai
             };
             return ea;
         }
-        public override void SetObjAttbutes(ElementAttbutes attbutes)
+        public override void SetObjWithAttbute(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
             waitTime = attbutes.WaitTime;
@@ -159,7 +159,7 @@ namespace Assets.Scripts.simai
         public override void ElementReset()
         {
             base.ElementReset();
-            SetObjAttbutes(objAttbutes);
+            SetObjWithAttbute(objAttbutes);
         }
     }
 }

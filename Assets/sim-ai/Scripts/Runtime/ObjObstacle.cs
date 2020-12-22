@@ -39,7 +39,7 @@ namespace Assets.Scripts.simai
         public override bool CanDrag => true;
 
         public override bool CanScale => true;
-        public override void SetObjAttbutes(ElementAttbutes attbutes)
+        public override void SetObjWithAttbute(ElementAttbutes attbutes)
         {
             model = attbutes.Model;
             transform.position = attbutes.TransformData.V3Pos.GetVector3();

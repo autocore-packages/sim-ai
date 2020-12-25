@@ -99,7 +99,6 @@ namespace Assets.Scripts.simai
         protected virtual void Start()
         {
             m_transform = transform;
-            ElementInit();
         }
 
         public void SetObjScale(float value) 

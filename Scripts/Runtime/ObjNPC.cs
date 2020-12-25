@@ -83,17 +83,23 @@ namespace Assets.Scripts.simai
 
         private LaneData laneCurrent;
         private int indexLane;
-        public override void ElementInit()
-        {
-            base.ElementInit();
-        }
         public void NPCInit()
         {
             isCarDrive = true;
-            laneCurrent = ElementsManager.Instance.SearchNearestPos2Lane(out int indexLaneFiset, posStart);
-            posAimTemp = laneCurrent.List_pos[indexLaneFiset].GetVector3();
+            laneCurrent = ElementsManager.Instance.SearchNearestPos2Lane(out int indexLaneFirst, posStart);
+            posAimTemp = laneCurrent.List_pos[indexLaneFirst].GetVector3();
             transform.position = posInit;
-            indexLane = indexLaneFiset;
+            indexLane = indexLaneFirst;
+        }
+        public override void ElementInit()
+        {
+            base.ElementInit();
+            NPCInit();
+        }
+        public override void ElementReset()
+        {
+            base.ElementReset();
+            NPCInit();
         }
         protected virtual void Update()
         {

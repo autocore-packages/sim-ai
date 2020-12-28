@@ -31,14 +31,35 @@ namespace Assets.Scripts.simai
             get; private set;
         }
         public bool IsInEdit { get; set; } = false;
+
+        private ObjEgo currentEgo;
         public ObjEgo CurrentEgo
         {
+            set
+            {
+                currentEgo = value;
+            }
             get
-            { 
-                return EgoList[indexEgo];
+            {
+                if (currentEgo == null)
+                {
+                    currentEgo = EgoList[0];
+                }
+                return currentEgo;
             }
         }
-        private int indexEgo=0;
+        private ElementObject _elementObject;
+        public ElementObject SelectedElement
+        {
+            get { return _elementObject; }
+            set
+            {
+                if (value != _elementObject)
+                {
+                    _elementObject = value;
+                }
+            }
+        }
 
         public List<ElementObject> ElementList = new List<ElementObject>();
         public List<ObjEgo> EgoList = new List<ObjEgo>();
@@ -131,18 +152,6 @@ namespace Assets.Scripts.simai
         public CursorMode cm = CursorMode.Auto;
 
 
-        public ElementObject _elementObject;
-        public ElementObject SelectedElement
-        {
-            get { return _elementObject; }
-            set
-            {
-                if (value != _elementObject)
-                {
-                    _elementObject = value;
-                }
-            }
-        }
 
         public Vector3 MouseWorldPos;
         public Action<Vector3> OnCameraRotate;

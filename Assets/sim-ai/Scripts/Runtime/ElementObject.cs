@@ -99,6 +99,7 @@ namespace Assets.Scripts.simai
         protected virtual void Start()
         {
             m_transform = transform;
+            ElementInit();
         }
 
         public void SetObjScale(float value) 
@@ -127,29 +128,29 @@ namespace Assets.Scripts.simai
                 gameObject.name = objAttbutes.Name;
                 return;
             }
-            if (this is ObjEgo)
+            if (this is ObjEgo objEgo)
             {
-                gameObject.name = "EgoVehicle";
+                gameObject.name = "EgoVehicle" + ElementsManager.Instance.EgoList.IndexOf(objEgo);
             }
-            else if (this is ObjObstacle)
+            else if (this is ObjObstacle objObstacle)
             {
-                gameObject.name = "Obstacle" + ElementsManager.Instance.ObstacleList.Count;
+                gameObject.name = "Obstacle" + ElementsManager.Instance.ObstacleList.IndexOf(objObstacle);
             }
-            else if (this is ObjPedestrian)
+            else if (this is ObjPedestrian objPedestrian)
             {
-                gameObject.name = "Pedestrian" + ElementsManager.Instance.PedestrainList.Count;
+                gameObject.name = "Pedestrian" + ElementsManager.Instance.PedestrainList.IndexOf(objPedestrian);
             }
-            else if (this is ObjTrafficLight)
+            else if (this is ObjTrafficLight objTrafficLight)
             {
-                gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.Count;
+                gameObject.name = "Traffic Light" + ElementsManager.Instance.TrafficLightList.IndexOf(objTrafficLight);
             }
-            else if (this is ObjNPC)
+            else if (this is ObjNPC objNPC)
             {
-                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.NPCList.Count;
+                gameObject.name = "NPC Vehicle" + ElementsManager.Instance.NPCList.IndexOf(objNPC);
             }
-            else if (this is ObjCheckPoint)
+            else if (this is ObjCheckPoint objCheckPoint)
             {
-                gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.Count;
+                gameObject.name = "CheckPoint" + ElementsManager.Instance.CheckPointList.IndexOf(objCheckPoint);
             }
         }
         public virtual void ElementReset()
